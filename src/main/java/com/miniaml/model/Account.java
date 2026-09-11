@@ -27,4 +27,27 @@ public class Account {
     public BigDecimal getBalance(){
         return balance;
     }
+
+    public void setId(Long id){
+        this.id = id;
+    }
+    public void setAccountNo(String accountNo){
+        this.accountNo = accountNo;
+    }
+    public void setCustomerId(Long customerId){
+        this.customerId = customerId;
+    }
+    public void setBalance(BigDecimal balance){
+        this.balance = balance;
+    }
+
+    @Override
+    public String toString(){
+        return "Account{" +
+                "id=" + id +
+                ", accountNo='"+ accountNo +
+                "', customerId=" + customerId +
+                ", balance=" + balance +
+                "}";
+    }
 }
