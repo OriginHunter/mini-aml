@@ -26,40 +26,51 @@ public class Transaction {
         this.type = type;
         this.transTime = transTime;
     }
+
     //10个方法读写字段
-    public Long getId(){
+    public Long getId() {
         return id;
     }
-    public void setId(Long id){
+
+    public void setId(Long id) {
         this.id = id;
     }
-    public Long getAccountId(){
+
+    public Long getAccountId() {
         return accountId;
     }
-    public void setAccountId(Long accountId){
+
+    public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
-    public BigDecimal getAmount(){
+
+    public BigDecimal getAmount() {
         return amount;
     }
-    public void setAmount(BigDecimal amount){
+
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-    public String getType(){
+
+    public String getType() {
         return type;
     }
-    public void setType(String type){
+
+    public void setType(String type) {
         this.type = type;
     }
-    public LocalDateTime getTransTime(){
+
+    public LocalDateTime getTransTime() {
         return transTime;
     }
-    public void setTransTime(LocalDateTime transTime){
+
+    public void setTransTime(LocalDateTime transTime) {
         this.transTime = transTime;
     }
+
     //toString()方法重写
     @Override
-    public String toString(){
+    public String toString() {
         return "Transaction{id=" + id +
                 ", accountId=" + accountId +
                 ", amount=" + amount +
@@ -69,7 +80,7 @@ public class Transaction {
     }
 }
 
-/*示例
+/*示例1
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -95,6 +106,40 @@ public class Main {
         t.setType("OUT");
         t.setTransTime(LocalDateTime.of(2026, 9, 14, 9, 50));
         System.out.println(t);
+
+    }
+}
+*/
+/*示例2
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import com.miniaml.model.Transaction;
+
+public class Main {
+    public static void main(String[] args) {
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(new Transaction(
+                10001L,
+                1L,
+                new BigDecimal("60000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 10, 10,30)));
+        transactions.add(new Transaction(
+                10002L,
+                1L,
+                new BigDecimal("40000.00"),
+                "OUT",
+                LocalDateTime.of(2026, 9, 10, 14,0)));
+        transactions.add(new Transaction(
+                10003L,
+                1L,
+                new BigDecimal("150000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 10, 16,0)));
+        System.out.println("共 " + transactions.size() +" 笔交易");
+        for(Transaction transaction : transactions){
+            System.out.println(transaction.getId() + " - " + transaction.getAmount());
 
     }
 }

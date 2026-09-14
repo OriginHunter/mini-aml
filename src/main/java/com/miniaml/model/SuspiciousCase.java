@@ -9,56 +9,68 @@ public class SuspiciousCase {
     private String ruleName;
     private LocalDateTime createTime;
     private String status;
+
     //构造函数
-    public SuspiciousCase(){
+    public SuspiciousCase() {
 
     }
+
     public SuspiciousCase(String caseNo,
                           Long transactionId,
                           String ruleName,
                           LocalDateTime createTime,
-                          String status){
-        this.caseNo =  caseNo;
-        this.transactionId =  transactionId;
-        this.ruleName =  ruleName;
-        this.createTime =  createTime;
-        this.status =  status;
+                          String status) {
+        this.caseNo = caseNo;
+        this.transactionId = transactionId;
+        this.ruleName = ruleName;
+        this.createTime = createTime;
+        this.status = status;
     }
+
     //五个字段读取与修改函数
-    public String getCaseNo(){
+    public String getCaseNo() {
         return caseNo;
     }
-    public Long getTransactionId(){
+
+    public Long getTransactionId() {
         return transactionId;
     }
-    public String getRuleName(){
+
+    public String getRuleName() {
         return ruleName;
     }
-    public LocalDateTime getCreateTime(){
+
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
-    public String getStatus(){
+
+    public String getStatus() {
         return status;
     }
 
     public void setCaseNo(String caseNo) {
         this.caseNo = caseNo;
     }
-    public void setTransactionId(Long transactionId){
+
+    public void setTransactionId(Long transactionId) {
         this.transactionId = transactionId;
     }
-    public void setRuleName(String ruleName){
+
+    public void setRuleName(String ruleName) {
         this.ruleName = ruleName;
     }
-    public void setCreateTime(LocalDateTime createTime){
+
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
-    public void setStatus(String status){
+
+    public void setStatus(String status) {
         this.status = status;
     }
+
     //重写toString()
     @Override
-    public String toString(){
+    public String toString() {
         return "SuspiciousCase{" +
                 "caseNo='" + caseNo +
                 "', transactionId=" + transactionId +
