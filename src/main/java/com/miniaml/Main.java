@@ -1,5 +1,7 @@
 package com.miniaml;
 
+import com.miniaml.model.Account;
+import com.miniaml.model.Customer;
 import com.miniaml.model.Transaction;
 import com.miniaml.rule.LargeAmountRule;
 import com.miniaml.rule.Rule;
@@ -9,18 +11,49 @@ import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
-        Transaction t1 = new Transaction(10001L, 1L,
-                new BigDecimal("49999.99"), "IN",
-                LocalDateTime.of(2026, 9, 10, 10, 30));
-        Transaction t2 = new Transaction(10002L, 1L,
-                new BigDecimal("50000.00"), "IN",
-                LocalDateTime.of(2026, 9, 10, 10, 30));
-        Transaction t3 = new Transaction(10003L, 1L,
-                new BigDecimal("60000.00"), "IN",
-                LocalDateTime.of(2026, 9, 10, 10, 30));
+        //创建客户
+        Customer customer = new Customer(
+                1L,
+                "张三",
+                "110101199001011234");
+        //创建账户
+        Account account = new Account(
+                1L,
+                "622200001",
+                customer.getId(),
+                new BigDecimal("100000.00"));
+        //创建交易
+        Transaction transaction = new Transaction(
+                10001L,
+                account.getId(),
+                new BigDecimal("60000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 10, 10,30));
+
+        //打印标题
+        System.out.println(
+                """
+                ========================
+                      mini-aml
+                   交易监测系统 v0.1
+                ========================
+                """);
+        System.out.println(
+                "客户名:" + customer.getName() + "\n" +
+                "账户ID:" + account.getAccountNo() + "\n" +
+                "交易流水号:" + transaction.getId() + "\n" +
+                "金额:" + transaction.getAmount() + "\n" +
+                "交易时间:" + transaction.getTransTime() + "\n");
+
+        //判断单笔金额是否命中
+        System.out.println("规则：单笔金额大于等于 5 万\n");
         Rule rule = new LargeAmountRule();
-        System.out.println("金额 49999.99 | " + rule.name() + " | 命中: " + rule.hit(t1));
-        System.out.println("金额 50000.00 | " + rule.name() + " | 命中: " + rule.hit(t2));
-        System.out.println("金额 60000.00 | " + rule.name() + " | 命中: " + rule.hit(t3));
+        if(rule.hit(transaction)){
+            System.out.println("⚠ 命中");
+        }
+        else{
+            System.out.println("未命中");
+        }
+
     }
 }
