@@ -9,28 +9,38 @@ import com.miniaml.rule.Rule;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        SuspiciousCase s = new SuspiciousCase(
-                "CASE-1",
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(new Transaction(
                 10001L,
-                "单笔金额大于等于 5 万",
-                LocalDateTime.of(2026, 9, 10, 10, 30),
-                "NEW"
-                );
-        System.out.println(s.getCaseNo());
-        System.out.println(s.getTransactionId());
-        System.out.println(s.getRuleName());
-        System.out.println(s.getCreateTime());
-        System.out.println(s.getStatus());
-        s.setCaseNo("CASE-2");
-        s.setTransactionId(10002L);
-        s.setRuleName("单日累计大于等于 20 万");
-        s.setCreateTime(LocalDateTime.of(2026, 9, 14, 16, 30));
-        s.setStatus("CONFIRMED");
-        System.out.println(s);
-/*        //创建客户
+                1L,
+                new BigDecimal("60000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 10, 10,30)));
+        transactions.add(new Transaction(
+                10002L,
+                1L,
+                new BigDecimal("40000.00"),
+                "OUT",
+                LocalDateTime.of(2026, 9, 10, 14,0)));
+        transactions.add(new Transaction(
+                10003L,
+                1L,
+                new BigDecimal("150000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 10, 16,0)));
+        System.out.println("共 " + transactions.size() +" 笔交易");
+        for(Transaction transaction : transactions){
+            System.out.println(transaction.getId() + " - " + transaction.getAmount());
+        }
+    }
+}
+/*
+        //创建客户
         Customer customer = new Customer(
                 1L,
                 "张三",
@@ -72,7 +82,6 @@ public class Main {
         }
         else{
             System.out.println("未命中");
-        }*/
+        }
 
-    }
-}
+*/
