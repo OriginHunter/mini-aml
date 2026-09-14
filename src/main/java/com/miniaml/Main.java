@@ -4,6 +4,7 @@ import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
 import com.miniaml.model.SuspiciousCase;
 import com.miniaml.model.Transaction;
+import com.miniaml.rule.DailyAmountRule;
 import com.miniaml.rule.LargeAmountRule;
 import com.miniaml.rule.Rule;
 
@@ -67,14 +68,20 @@ public class Main {
 
         //判断单笔金额是否命中
         System.out.println("规则：单笔金额大于等于 5 万\n");
-        Rule rule = new LargeAmountRule();
-        if (rule.hit(transactions)) {
+        Rule ruleLargeAmount = new LargeAmountRule();
+        if (ruleLargeAmount.hit(transactions)) {
             System.out.println("⚠ 命中");
         } else {
             System.out.println("未命中");
         }
-
-
+        //判断单日金额是否命中
+        System.out.println("规则：单日累计大于等于 20 万\n");
+        Rule ruleDailyAmount = new DailyAmountRule();
+        if (ruleDailyAmount.hit(transactions)) {
+            System.out.println("⚠ 命中");
+        } else {
+            System.out.println("未命中");
+        }
     }
 }
 
