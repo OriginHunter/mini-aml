@@ -10,8 +10,9 @@ String type（"IN" 或 "OUT"）、LocalDateTime transTime（交易时间），
 
 4.再写 5 个 getter（用 return，不打印）和 5 个 setter（用 this.xxx = xxx），
 
-5.最后重写 toString() 让打印结果形如 Transaction{id=10001, accountId=1,
-amount=60000.00, type='IN', transTime=2026-09-10T10:30}
+5.最后重写 toString() 让打印结果形如
+Transaction{id=10001, accountId=1, amount=60000.00, type='IN', transTime=2026-09-10T10:30}
+Transaction{id=10001, accountId=1, amount=60000.00, type='IN', transTime=2026-09-10T10:30}
 （其中 type 是字符串要加单引号，其余字段不加），
 
 6.写完后在 Main 里用
