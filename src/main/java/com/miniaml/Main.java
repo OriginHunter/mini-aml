@@ -2,7 +2,7 @@ package com.miniaml;
 
 import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
-import com.miniaml.model.SuspiciousCase;
+//import com.miniaml.model.SuspiciousCase;
 import com.miniaml.model.Transaction;
 import com.miniaml.rule.DailyAmountRule;
 import com.miniaml.rule.LargeAmountRule;
@@ -55,7 +55,7 @@ public class Main {
                               mini-aml
                            交易监测系统 v0.1
                         ========================
-                        """);
+                                                \s""");
         System.out.println(
                 "客户名:" + customer.getName() + "\n" +
                         "账户ID:" + account.getAccountNo() + "\n");
@@ -65,23 +65,20 @@ public class Main {
                             "金额:" + transaction.getAmount() + "\n" +
                             "交易时间:" + transaction.getTransTime() + "\n");
         }
+        //规则列表
+        List<Rule> rules = new ArrayList<>();
+        rules.add(new LargeAmountRule());
+        rules.add(new DailyAmountRule());
+        //判断规则是否命中
+        for (Rule rule : rules) {
+            System.out.println("规则:" + rule.name());
+            if (rule.hit(transactions)) {
+                System.out.println(" ⚠ 命中");
+            } else {
+                System.out.println("未命中");
+            }
+        }
 
-        //判断单笔金额是否命中
-        System.out.println("规则：单笔金额大于等于 5 万\n");
-        Rule ruleLargeAmount = new LargeAmountRule();
-        if (ruleLargeAmount.hit(transactions)) {
-            System.out.println("⚠ 命中");
-        } else {
-            System.out.println("未命中");
-        }
-        //判断单日金额是否命中
-        System.out.println("规则：单日累计大于等于 20 万\n");
-        Rule ruleDailyAmount = new DailyAmountRule();
-        if (ruleDailyAmount.hit(transactions)) {
-            System.out.println("⚠ 命中");
-        } else {
-            System.out.println("未命中");
-        }
     }
 }
 
