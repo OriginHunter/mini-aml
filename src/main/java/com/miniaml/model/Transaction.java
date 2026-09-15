@@ -20,6 +20,24 @@ public class Transaction {
                        BigDecimal amount,
                        String type,
                        LocalDateTime transTime) {
+        if (id == null) {
+            throw new IllegalArgumentException("交易 ID 不能为空");
+        }
+        if (accountId == null) {
+            throw new IllegalArgumentException("账户 ID 不能为空");
+        }
+        if (amount == null) {
+            throw new IllegalArgumentException("金额不能为空");
+        }
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("金额不能为负");
+        }
+        if (!"IN".equals(type) && !"OUT".equals(type)) {
+            throw new IllegalArgumentException("交易类型只能是 IN 或 OUT");
+        }
+        if (transTime == null) {
+            throw new IllegalArgumentException("交易时间不能为空");
+        }
         this.id = id;
         this.accountId = accountId;
         this.amount = amount;

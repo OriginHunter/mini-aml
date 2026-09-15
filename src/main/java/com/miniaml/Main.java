@@ -2,7 +2,6 @@ package com.miniaml;
 
 import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
-//import com.miniaml.model.SuspiciousCase;
 import com.miniaml.model.Transaction;
 import com.miniaml.rule.DailyAmountRule;
 import com.miniaml.rule.LargeAmountRule;
@@ -49,13 +48,12 @@ public class Main {
                 LocalDateTime.of(2026, 9, 10, 16, 0)));
 
         //打印标题
-        System.out.println(
-                """
-                        ========================
-                              mini-aml
-                           交易监测系统 v0.1
-                        ========================
-                                                \s""");
+        System.out.println("""
+                                ========================
+                                      mini-aml
+                                   交易监测系统 v0.1
+                                ========================
+                        """);
         System.out.println(
                 "客户名:" + customer.getName() + "\n" +
                         "账户ID:" + account.getAccountNo() + "\n");
@@ -78,7 +76,58 @@ public class Main {
                 System.out.println("未命中");
             }
         }
+        //异常测试
+        testException();
+    }
 
+    private static void testException() {
+        try {
+            Transaction t = new Transaction(
+                    10001L,
+                    1L,
+                    new BigDecimal("40000.00"),
+                    "IN",
+                    LocalDateTime.of(2026, 9, 10, 10, 30));
+            System.out.println("创建成功:" + t.getId());
+        } catch (IllegalArgumentException e) {
+            System.out.println("捕获异常:" + e.getMessage());
+        }
+        //金额负数
+        try {
+            new Transaction(
+                    10001L,
+                    1L,
+                    new BigDecimal("-40000.00"),
+                    "IN",
+                    LocalDateTime.of(2026, 9, 10, 10, 30));
+            System.out.println("不应该到这行");
+        } catch (IllegalArgumentException e) {
+            System.out.println("捕获异常:" + e.getMessage());
+        }
+        //交易类型异常
+        try {
+            new Transaction(
+                    10001L,
+                    1L,
+                    new BigDecimal("40000.00"),
+                    "TRANSFER",
+                    LocalDateTime.of(2026, 9, 10, 10, 30));
+            System.out.println("不应该到这行");
+        } catch (IllegalArgumentException e) {
+            System.out.println("捕获异常:" + e.getMessage());
+        }
+        //交易 ID 为空
+        try {
+            new Transaction(
+                    null,
+                    1L,
+                    new BigDecimal("40000.00"),
+                    "IN",
+                    LocalDateTime.of(2026, 9, 10, 10, 30));
+            System.out.println("不应该到这行");
+        } catch (IllegalArgumentException e) {
+            System.out.println("捕获异常:" + e.getMessage());
+        }
     }
 }
 
