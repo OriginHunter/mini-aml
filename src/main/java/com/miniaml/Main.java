@@ -10,11 +10,12 @@ import com.miniaml.rule.Rule;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
-
         //创建客户
         Customer customer = new Customer(
                 1L,
@@ -49,11 +50,11 @@ public class Main {
 
         //打印标题
         System.out.println("""
-                                ========================
-                                      mini-aml
-                                   交易监测系统 v0.1
-                                ========================
-                        """);
+                        ========================
+                              mini-aml
+                           交易监测系统 v0.1
+                        ========================
+                """);
         System.out.println(
                 "客户名:" + customer.getName() + "\n" +
                         "账户ID:" + account.getAccountNo() + "\n");
@@ -78,6 +79,8 @@ public class Main {
         }
         //异常测试
         testException();
+        //临时测试
+        testMap();
     }
 
     private static void testException() {
@@ -128,7 +131,22 @@ public class Main {
         } catch (IllegalArgumentException e) {
             System.out.println("捕获异常:" + e.getMessage());
         }
+
+    }
+
+    private static void testMap() {
+        Map<Long, String> students = new HashMap<>();
+        students.put(2024001L, "张三");
+        students.put(2024002L, "李四");
+        students.put(2024003L, "王五");
+        //遍历students
+        for (Long key : students.keySet()) {
+            String value = students.get(key);
+            System.out.println(key + " → " + value);
+        }
+        for (Map.Entry<Long, String> entry : students.entrySet()) {
+            System.out.println(entry.getKey() + " → " + entry.getValue());
+        }
     }
 }
-
 
