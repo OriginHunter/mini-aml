@@ -69,3 +69,48 @@ mini-aml 里所有与金额相关的字段都用 BigDecimal：
 - Transaction.amount
 - LargeAmountRule.THRESHOLD
 - DailyAmountRule.DAILY_THRESHOLD
+
+## 类关系图
+
+```mermaid
+classDiagram
+    class Customer {
+        +Long id
+        +String name
+        +String idCard
+    }
+    class Account {
+        +Long id
+        +String accountNo
+        +Long customerId
+        +BigDecimal balance
+    }
+    class Transaction {
+        +Long id
+        +Long accountId
+        +BigDecimal amount
+        +String type
+        +LocalDateTime transTime
+    }
+    class Rule {
+        <<interface>>
+        +boolean hit(List~Transaction~)
+        +String name()
+    }
+    class LargeAmountRule
+    class DailyAmountRule
+    class SuspiciousCase {
+        +String caseNo
+        +Long transactionId
+        +String ruleName
+        +LocalDateTime createTime
+        +String status
+    }
+
+    Customer "1" --> "*" Account : 拥有
+    Account "1" --> "*" Transaction : 发生
+    Transaction ..> Rule : 被判断
+    Rule <|.. LargeAmountRule : 实现
+    Rule <|.. DailyAmountRule : 实现
+    Rule ..> SuspiciousCase : 命中生成
+```
