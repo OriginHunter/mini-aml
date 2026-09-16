@@ -144,7 +144,7 @@ public class Main {
         transactions.add(new Transaction(
                 10002L,
                 2L,
-                new BigDecimal("80000.00"),
+                new BigDecimal("180000.00"),
                 "IN",
                 LocalDateTime.of(2026, 9, 10, 23, 30)));
         transactions.add(new Transaction(
@@ -156,7 +156,7 @@ public class Main {
         transactions.add(new Transaction(
                 10004L,
                 1L,
-                new BigDecimal("70000.00"),
+                new BigDecimal("20000.00"),
                 "IN",
                 LocalDateTime.of(2026, 10, 10, 10, 30)));
         transactions.add(new Transaction(
@@ -176,6 +176,20 @@ public class Main {
         for (Map.Entry<Long, List<Transaction>> entry : byAccount.entrySet()) {
             System.out.println("账户 " + entry.getKey() + " 有 " + entry.getValue().size() + " 笔交易");
         }
+        List<Rule> rules = new ArrayList<>();
+        rules.add(new DailyAmountRule());
+        rules.add(new LargeAmountRule());
+        for (Map.Entry<Long, List<Transaction>> entry : byAccount.entrySet()) {
+            System.out.println("========== 账户 " + entry.getKey() + " ==========");
+            for (Rule rule : rules) {
+                if (rule.hit(entry.getValue())) {
+                    System.out.println("规则:" + rule.name() + " ⚠ 命中");
+                } else {
+                    System.out.println("规则:" + rule.name() + " 未命中");
+                }
+            }
+        }
+
     }
 }
 
