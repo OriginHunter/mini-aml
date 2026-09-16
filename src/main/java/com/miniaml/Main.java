@@ -9,10 +9,7 @@ import com.miniaml.rule.Rule;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -43,8 +40,39 @@ public class Main {
         checkRulesByAccount(byAccount, rules);
         //异常测试
         testException();
+        //集合测试
+        testSet();
+        //fail-fast测试
+        testFailFast();
     }
+    private static void testFailFast() {
+        List<String> list = new ArrayList<>();
+        list.add("A");
+        list.add("B");
+        list.add("C");
 
+        try {
+            for (String s : list) {
+                if (s.equals("B")) {
+                    list.remove(s);      // 触发异常
+                }
+            }
+        } catch (ConcurrentModificationException e) {
+            System.out.println("捕获到：" + e.getClass().getSimpleName());
+        }
+    }
+    private static void testSet(){
+        Set<String> set = new HashSet<>();
+        set.add("A");
+        set.add("B");
+        set.add("C");
+        set.add("A");
+        System.out.println("集合大小" + set.size());
+        System.out.println("包含 A " + set.contains("A"));
+        for (String s : set) {
+            System.out.println(s);
+        }
+    }
     private static List<Transaction> createTransactions() {
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(new Transaction(
@@ -187,6 +215,7 @@ public class Main {
             }
         }
     }
+
 }
 
 
