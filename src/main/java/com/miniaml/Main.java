@@ -50,10 +50,10 @@ public class Main {
 
         //打印标题
         System.out.println("""
-                        ========================
-                              mini-aml
-                           交易监测系统 v0.1
-                        ========================
+                ========================
+                      mini-aml
+                   交易监测系统 v0.1
+                ========================
                 """);
         System.out.println(
                 "客户名:" + customer.getName() + "\n" +
@@ -79,8 +79,7 @@ public class Main {
         }
         //异常测试
         testException();
-        //临时测试
-        testMap();
+        testGroupTransactions();
     }
 
     private static void testException() {
@@ -134,19 +133,54 @@ public class Main {
 
     }
 
-    private static void testMap() {
-        Map<Long, String> students = new HashMap<>();
-        students.put(2024001L, "张三");
-        students.put(2024002L, "李四");
-        students.put(2024003L, "王五");
-        //遍历students
-        for (Long key : students.keySet()) {
-            String value = students.get(key);
-            System.out.println(key + " → " + value);
+    private static void testGroupTransactions() {
+        List<Transaction> transactions = new ArrayList<>();
+        transactions.add(new Transaction(
+                10001L,
+                1L,
+                new BigDecimal("40000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 10, 10, 30)));
+        transactions.add(new Transaction(
+                10002L,
+                2L,
+                new BigDecimal("80000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 10, 23, 30)));
+        transactions.add(new Transaction(
+                10003L,
+                2L,
+                new BigDecimal("30000.00"),
+                "OUT",
+                LocalDateTime.of(2026, 9, 11, 6, 30)));
+        transactions.add(new Transaction(
+                10004L,
+                1L,
+                new BigDecimal("70000.00"),
+                "IN",
+                LocalDateTime.of(2026, 10, 10, 10, 30)));
+        transactions.add(new Transaction(
+                10005L,
+                1L,
+                new BigDecimal("40000.00"),
+                "OUT",
+                LocalDateTime.of(2026, 10, 10, 15, 30)));
+        Map<Long, List<Transaction>> byAccount = new HashMap<>();
+        for (Transaction transaction : transactions) {
+            Long accountId = transaction.getAccountId();
+            if (!byAccount.containsKey(accountId)) {
+                byAccount.put(accountId, new ArrayList<>());
+            }
+            byAccount.get(accountId).add(transaction);
         }
-        for (Map.Entry<Long, String> entry : students.entrySet()) {
-            System.out.println(entry.getKey() + " → " + entry.getValue());
+        for (Map.Entry<Long, List<Transaction>> entry : byAccount.entrySet()) {
+            System.out.println("账户 " + entry.getKey() + " 有 " + entry.getValue().size() + " 笔交易");
         }
     }
 }
 
+
+/*
+
+
+ */
