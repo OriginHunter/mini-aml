@@ -128,3 +128,21 @@ classDiagram
 - 解决思路：按日期分组（用 Map<LocalDate, List<Transaction>> 或
   后面的 Stream groupingBy）
 - 计划：第 2-3 关（Stream）或第 3 阶段解决
+
+📅 2026-09-16 下午
+
+⏱️ 用时：约 3.5 小时
+📈 XP：+210
+🪙 金币：+21
+🏆 成就：+2
+📤 Git 提交：2 次（2ce7699 + 068c509）
+🎯 进度：第 2 章 50% → 55%
+
+✅ 完成：
+- Main 重构（80 行 → 17 行，抽 8 个方法）
+- Set 基础（add / contains / 去重 / 遍历）
+- fail-fast 机制
+- 实测发现 List fail-fast 不稳定（重要）
+
+🎮 等级：Lv.8  后端实习生候选人
+XP：1475 / 1800
