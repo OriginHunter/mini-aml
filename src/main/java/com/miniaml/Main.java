@@ -110,10 +110,8 @@ public class Main {
         Map<Long, List<Transaction>> byAccount = new HashMap<>();
         for (Transaction transaction : transactions) {
             Long accountId = transaction.getAccountId();
-            if (!byAccount.containsKey(accountId)) {
-                byAccount.put(accountId, new ArrayList<>());
-            }
-            byAccount.get(accountId).add(transaction);
+            byAccount.computeIfAbsent(accountId,
+                    k -> new ArrayList<>()).add(transaction);
         }
         return byAccount;
     }
@@ -135,7 +133,4 @@ public class Main {
 }
 
 
-/*
 
-
- */
