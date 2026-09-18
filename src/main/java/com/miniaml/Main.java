@@ -39,29 +39,8 @@ public class Main {
         Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
         //判断规则是否命中
         checkRulesByAccount(byAccount, rules);
-        //stream测试
-        testStream();
     }
 
-    private static void testStream() {
-        List<Transaction> transactions = createTransactions();
-
-        List<Long> ids =  transactions.stream()
-                .filter(transaction ->
-                        transaction.getAmount().compareTo(new BigDecimal("50000.00")) > 0)
-               // .map(transaction -> transaction.getId())
-                .map(Transaction::getId)
-                .collect(Collectors.toList());
-        //ids.forEach(id -> System.out.println(id));
-        ids.forEach(System.out::println);
-        List<BigDecimal> amounts = transactions.stream()
-                .filter(transaction ->
-                        transaction.getAmount().compareTo(new BigDecimal("50000.00")) > 0)
-                //.map(transaction -> transaction.getAmount())
-                .map(Transaction::getAmount)
-                .collect(Collectors.toList());
-        amounts.forEach(amount -> System.out.println(amount));
-    }
 
     private static List<Transaction> createTransactions() {
         List<Transaction> transactions = new ArrayList<>();
@@ -130,12 +109,8 @@ public class Main {
     }
 
     private static Map<Long, List<Transaction>> groupByAccount(List<Transaction> transactions) {
-        Map<Long, List<Transaction>> byAccount = new HashMap<>();
-        for (Transaction transaction : transactions) {
-            Long accountId = transaction.getAccountId();
-            byAccount.computeIfAbsent(accountId,
-                    k -> new ArrayList<>()).add(transaction);
-        }
+        Map<Long, List<Transaction>> byAccount = transactions.stream()
+                .collect(Collectors.groupingBy(Transaction::getAccountId));
         return byAccount;
     }
 

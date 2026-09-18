@@ -1,23 +1,21 @@
-🎉 第 2-5 关 · Lambda 表达式 完成！
+🎉 第 2-6 关 Stream 完成！
 
-任务：
-✅ 理解 Lambda 概念 +10 XP
-✅ forEach + Lambda 练习 +10 XP
-✅ Map.forEach +10 XP
-✅ removeIf + Predicate +15 XP
-✅ computeIfAbsent 分组 +30 XP
-✅ Lambda 融入项目（groupByAccount）+40 XP
-✅ 自己回答填空 +20 XP
-⬜ Git commit
+任务结算：
+✅ stream1（创建流 + forEach）+15 XP
+✅ stream2（filter）+20 XP
+✅ stream3（map）+20 XP
+✅ stream4（filter + map + collect）+30 XP
+✅ stream5（groupingBy）+40 XP
+✅ 发现"原数据不可变"+30 XP
+✅ groupByAccount 用 Stream 重构 +40 XP
 
-小计：+135 XP
+小计：+195 XP
 关卡完成奖励：+100 XP
-总计：+235 XP
-
-金币：+23 🪙
+总计：+295 XP
 
 成就解锁：
-🏆 Lambda 初学者      — 掌握 forEach / removeIf / computeIfAbsent
-🏆 函数式思维         — 理解 Lambda 的"参数 -> 表达式"读法
+🏆 Stream 炼金术士    — 掌握 filter / map / collect / groupingBy
 
-当前 XP：2085 + 235 = 2320 / 2400
+当前状态：
+Lv.10  Java 实战者
+XP：2405 + 295 = 2700 / 3200
