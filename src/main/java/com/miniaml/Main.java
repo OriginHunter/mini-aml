@@ -10,6 +10,7 @@ import com.miniaml.rule.Rule;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -38,6 +39,28 @@ public class Main {
         Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
         //判断规则是否命中
         checkRulesByAccount(byAccount, rules);
+        //stream测试
+        testStream();
+    }
+
+    private static void testStream() {
+        List<Transaction> transactions = createTransactions();
+
+        List<Long> ids =  transactions.stream()
+                .filter(transaction ->
+                        transaction.getAmount().compareTo(new BigDecimal("50000.00")) > 0)
+               // .map(transaction -> transaction.getId())
+                .map(Transaction::getId)
+                .collect(Collectors.toList());
+        //ids.forEach(id -> System.out.println(id));
+        ids.forEach(System.out::println);
+        List<BigDecimal> amounts = transactions.stream()
+                .filter(transaction ->
+                        transaction.getAmount().compareTo(new BigDecimal("50000.00")) > 0)
+                //.map(transaction -> transaction.getAmount())
+                .map(Transaction::getAmount)
+                .collect(Collectors.toList());
+        amounts.forEach(amount -> System.out.println(amount));
     }
 
     private static List<Transaction> createTransactions() {
@@ -63,7 +86,7 @@ public class Main {
         transactions.add(new Transaction(
                 10004L,
                 1L,
-                new BigDecimal("20000.00"),
+                new BigDecimal("60000.00"),
                 "IN",
                 LocalDateTime.of(2026, 10, 10, 10, 30)));
         transactions.add(new Transaction(
