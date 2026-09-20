@@ -67,7 +67,7 @@ public class Main {
     }
 
     private static void createTransactions() {
-        Random random = new Random(0);
+        Random random = new Random(2);
         LocalDateTime start = LocalDateTime.of(2026, 9, 1, 0, 0);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/main/resources/transactions.csv"))) {
             writer.write("id,accountId,amount,type,transTime");
@@ -80,7 +80,7 @@ public class Main {
                 boolean isIn = random.nextBoolean();
                 String type = isIn ? "IN" : "OUT";
 
-                int amount = random.nextInt(70000 - 1000 + 1) + 1000;
+                int amount = random.nextInt(220000 - 1000 + 1) + 1000;
 
                 int dayOfMonth = random.nextInt(30);
                 int hour = random.nextInt(24);

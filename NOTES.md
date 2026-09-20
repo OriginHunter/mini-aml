@@ -10,23 +10,23 @@
 |---|---|
 | 玩家 | OriginHunter |
 | 等级 | Lv.10 Java 实战者 |
-| XP | 2840 / 3200 |
-| 金币 | 约 600 |
-| 当前关卡 | 2-6 Stream API（接近完成） |
+| XP | 2920 / 3200 |
+| 金币 | 约 650 |
+| 当前关卡 | 第 2 章接近完成 |
 
 ### 主线进度
 
 ```
 第1章：Java 基础与 OOP           ✅ 100%
-第2章：集合与进阶                 🟡 90%
+第2章：集合与进阶                 🟡 95%
   ├─ 2-1 List                     ✅
   ├─ 2-2 Map + 异常 + 重构         ✅
   ├─ 2-3 Set + fail-fast          ✅
   ├─ 2-4 JUnit 5                  ✅
   ├─ 2-5 Lambda                   ✅
-  ├─ 2-6 Stream API               🟡
-  ├─ 2-7 泛型深入                 ⬜
-  └─ 2-8 日志                     ⬜
+  ├─ 2-6 Stream API               ✅
+  ├─ 2-7 泛型深入                 ⬜（可选）
+  └─ 2-8 日志                     ⬜（可选）
 第3章：MySQL + JDBC              ⬜ 0%
 第4章：Spring Boot               ⬜ 0%
 第5章：MyBatis + REST            ⬜ 0%
@@ -34,7 +34,7 @@
 第7章：Vue                       ⬜ 0%
 ```
 
-### 已解锁成就（18）
+### 已解锁成就（20）
 
 ```
 🏆 Java 启蒙           — 第一次运行 Java 程序
@@ -57,6 +57,8 @@
 🏆 观察者              — 发现"原数据不可变"的重要特性
 🏆 文件 IO 入门者      — 掌握 FileReader / FileWriter
 🏆 数据管道工程师      — 让数据从生成 → 文件 → 业务流通
+🏆 Bug 猎人            — 发现并修复"变量作用域"bug
+🏆 规则工程师          — DailyAmountRule 真正实现按日期分组
 ```
 
 ### 项目进度
@@ -65,7 +67,7 @@
 mini-aml
 
 v0.1 ██████████ 100%   控制台版
-v0.2 █████████░ 90%    集合 + 异常 + 分组 + 测试 + CSV
+v0.2 ██████████ 100%   集合 + 异常 + 分组 + 测试 + CSV + Stream
 v0.3 ⬜                接入 MySQL
 v0.4 ⬜                Spring Boot API
 v0.5 ⬜                MyBatis + REST
@@ -104,6 +106,7 @@ v1.0 ⬜                完整系统
 - `Map`（键值对）/ `HashMap`
 - `List<Long>` vs `long`：包装类 vs 基本类型
 - 自动装箱 / 拆箱
+- `containsKey` vs `get`：判断"有没有" vs "值是什么"
 
 ### 异常
 
@@ -111,6 +114,7 @@ v1.0 ⬜                完整系统
 - `throw` 抛异常
 - checked（`IOException`）vs unchecked（`IllegalArgumentException`）
 - `try-with-resources`（自动关闭）
+- 常见异常：`NullPointerException` / `IllegalArgumentException` / `ConcurrentModificationException`
 
 ### Lambda & Stream
 
@@ -175,15 +179,23 @@ try (BufferedReader reader = new BufferedReader(new FileReader("路径"))) {
 
 - `String.split(",")` 切分
 - `Long.parseLong(s)` / `new BigDecimal(s)` / `LocalDateTime.parse(s)` 类型转换
+- 路径相对于"工作目录"（IDEA 里默认是项目根目录）
+
+**Random**：
+
+- `new Random()`：每次不同
+- `new Random(种子)`：固定种子 → 可复现
+- `nextInt(n)`：0~n-1
+- `nextInt(max - min + 1) + min`：生成 min~max
 
 ### 测试 JUnit 5
 
 ```java
 @Test
 void 测试名() {
-    // Arrange
-    // Act
-    // Assert
+    // Arrange 准备
+    // Act 执行
+    // Assert 断言
     assertTrue(...);
     assertFalse(...);
     assertEquals(...);
@@ -193,9 +205,10 @@ void 测试名() {
 ```
 
 **重要点**：
+
 - 测试类放 `src/test/java` 下，和被测类同包名
 - 类名 = 被测类名 + Test
-- Maven 引入依赖：`<dependency>` 加 `sync`
+- Maven 引入依赖：`<dependency>` 加 JUnit
 
 ### Git
 
@@ -205,25 +218,29 @@ git commit -m "feat: xxx"
 git push
 git log --oneline
 git status
+git restore <file>     # 撤销文件改动
 ```
 
 **Commit 前缀**：
 
 ```
-feat:   新功能
-fix:    修 bug
-docs:   文档
+feat:     新功能
+fix:      修 bug
+docs:     文档
 refactor: 重构
-test:   测试
-chore:  杂项
-wip:    半成品
+test:     测试
+chore:    杂项
+wip:      半成品
 ```
+
+**提交频率**：完成一件完整的事就提交一次（每天 2~5 次）。
 
 ---
 
 ## 📅 学习进度
 
 ### 2026-09-10 ~ 09-14（第 1 章）
+
 - 环境搭建、Maven、Git、IDEA
 - Customer / Account / Transaction / SuspiciousCase
 - Rule 接口、LargeAmountRule、DailyAmountRule
@@ -231,6 +248,7 @@ wip:    半成品
 - GitHub 上传、README、UML 图
 
 ### 2026-09-15 ~ 09-16（第 2 章前段）
+
 - List（add / get / size / 遍历）
 - Map（put / get / containsKey / entrySet）
 - Set（去重 / contains）
@@ -240,12 +258,14 @@ wip:    半成品
 - Transaction 参数校验
 
 ### 2026-09-17（JUnit + Lambda）
+
 - JUnit 5：@Test、断言、10 个测试全通过
 - 测试类放 src/test/java，同包名
 - Lambda：forEach / removeIf / computeIfAbsent
 - groupByAccount 用 computeIfAbsent 重构
 
 ### 2026-09-18（Stream）
+
 - Stream 三段结构：创建 → 中间 → 终止
 - filter（过滤）/ map（转换）/ collect（收集）
 - groupingBy（分组）
@@ -253,34 +273,35 @@ wip:    半成品
 - 方法引用 `Transaction::getId`
 - groupByAccount 用 groupingBy 重构
 
-### 2026-09-20（文件 IO + CSV）
+### 2026-09-20（文件 IO + CSV + DailyAmountRule 重构）
+
 - BufferedWriter / FileWriter 写文件
 - BufferedReader / FileReader 读文件
 - try-with-resources 自动关闭
-- Random 生成随机数
-- Random 种子：`new Random(42)` 让数据可复现
+- Random 生成随机数 + 固定种子可复现
 - LocalDateTime 时间生成
 - String.split 切分 CSV
 - 类型转换：Long.parseLong / new BigDecimal / LocalDateTime.parse
 - 完成数据管道：生成 → 文件 → 读取 → 业务处理
+- **DailyAmountRule 重构**：用 groupingBy 按日期分组
+- **踩坑**：变量作用域——total 在外层循环外声明，会跨天累加
+- **踩坑**：Map 的 key 类型必须和 groupingBy 返回的 key 一致
 
 ---
 
 ## 📝 TODO
 
 ### 高优先级
-- [ ] `DailyAmountRule` 真正实现"按日期分组"
-  现在：全部相加判断 ≥ 20 万
-  应该：按日期分组后，每天单独判断 ≥ 20 万
+- [ ] 更新 `README.md`（项目已到 v0.2）
+- [ ] 清理 Main 里的学习练习方法（createTransactions 已有正名）
 
 ### 中优先级
-- [ ] 更新 `README.md`（项目已到 v0.2）
 - [ ] 补充 2-7 泛型深入
 - [ ] 补充 2-8 日志（用 Log 替代 System.out.println）
 
 ### 低优先级
-- [ ] 代码里的 `step1` ~ `step5` 学习练习删掉
-- [ ] `Main` 里 `createTransactions` 名字改为 `generateTransactions`（避免和模型类名混淆）
+- [ ] 引入 Service 层，把 Main 拆更细
+- [ ] `Main` 里 `createTransactions` 重命名为 `generateTransactions`
 
 ---
 
