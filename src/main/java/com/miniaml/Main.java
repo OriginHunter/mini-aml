@@ -1,5 +1,6 @@
 package com.miniaml;
 
+import com.miniaml.exception.InvalidTransactionException;
 import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
 import com.miniaml.model.Transaction;
@@ -10,6 +11,7 @@ import com.miniaml.rule.Rule;
 import java.io.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,19 +51,35 @@ public class Main {
         try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/transactions.csv"))) {
             reader.readLine();
             String line;
+            int lineNum = 1;
             while ((line = reader.readLine()) != null) {
+                lineNum++;
                 String[] string = line.split(",");
-                Long id = Long.parseLong(string[0]);
-                Long accountId = Long.parseLong(string[1]);
-                BigDecimal amount = new BigDecimal(string[2]);
-                String type = string[3];
-                LocalDateTime transTime = LocalDateTime.parse(string[4]);
+                if (string.length != 5) {
+                   throw new InvalidTransactionException(
+                           "第 " + lineNum + " 行字段个数不对：" + line);
+                }
+                try {
+                    Long id = Long.parseLong(string[0]);
+                    Long accountId = Long.parseLong(string[1]);
+                    BigDecimal amount = new BigDecimal(string[2]);
+                    String type = string[3];
+                    LocalDateTime transTime = LocalDateTime.parse(string[4]);
+                    if (!"IN".equals(type) && !"OUT".equals(type)) {
+                        throw new InvalidTransactionException(
+                                "第 " + lineNum + " 行交易类型非法：" + type);
+                    }
 
-                Transaction t = new Transaction(id, accountId, amount, type, transTime);
-                transactions.add(t);
+                    Transaction t = new Transaction(id, accountId, amount, type, transTime);
+                    transactions.add(t);
+                } catch (NumberFormatException | DateTimeParseException e) {
+                    throw new InvalidTransactionException(
+                            "第 " + lineNum + " 行数据格式不对：" + line);
+                }
+
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("读文件失败：" + e.getMessage());
         }
         return transactions;
     }
@@ -125,7 +143,7 @@ public class Main {
         for (Transaction transaction : transactions) {
             System.out.println(
                     "交易流水号:" + transaction.getId() + "\n" +
-                    "交易账户:" + transaction.getAccountId() + "\n" +
+                            "交易账户:" + transaction.getAccountId() + "\n" +
                             "金额:" + transaction.getAmount() + "\n" +
                             "交易时间:" + transaction.getTransTime() + "\n");
         }
@@ -149,8 +167,4 @@ public class Main {
             }
         }
     }
-
 }
-
-
-

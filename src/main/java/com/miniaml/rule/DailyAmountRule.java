@@ -9,16 +9,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DailyAmountRule implements Rule {
-    private static final BigDecimal DAILY_THRESHOLD  = new BigDecimal("200000.00");
+    private static final BigDecimal DAILY_THRESHOLD = new BigDecimal("200000.00");
+
     @Override
     public boolean hit(List<Transaction> transactions) {
-        Map<LocalDate, List<Transaction>> byDate= transactions.stream()
+        Map<LocalDate, List<Transaction>> byDate = transactions.stream()
                 .collect(Collectors.groupingBy(transaction ->
                         transaction.getTransTime().toLocalDate()));
         for (Map.Entry<LocalDate, List<Transaction>> entry : byDate.entrySet()) {
-            BigDecimal total = BigDecimal.ZERO ;
+            BigDecimal total = BigDecimal.ZERO;
             for (Transaction transaction : entry.getValue()) {
-                    total = total.add(transaction.getAmount());
+                total = total.add(transaction.getAmount());
             }
             if (total.compareTo(DAILY_THRESHOLD) >= 0) {
                 return true;
