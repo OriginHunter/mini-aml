@@ -30,20 +30,24 @@ public class Main {
                 new BigDecimal("100000.00"));
         //random生成交易
         createTransactions();
-        //创建交易列表
-        List<Transaction> transactions = loadTransactions();
-        //打印标题
-        printHeader();
-        //打印客户与账户
-        printCustomerInfo(customer, account);
-        //打印交易
-        printTransactions(transactions);
-        //规则列表
-        List<Rule> rules = createRules();
-        //按照账户给交易分组
-        Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
-        //判断规则是否命中
-        checkRulesByAccount(byAccount, rules);
+        try {
+            //创建交易列表
+            List<Transaction> transactions = loadTransactions();
+            //打印标题
+            printHeader();
+            //打印客户与账户
+            printCustomerInfo(customer, account);
+            //打印交易
+            printTransactions(transactions);
+            //规则列表
+            List<Rule> rules = createRules();
+            //按照账户给交易分组
+            Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
+            //判断规则是否命中
+            checkRulesByAccount(byAccount, rules);
+        } catch (InvalidTransactionException e) {
+            System.out.println("数据错误：" + e.getMessage());
+        }
     }
 
     private static List<Transaction> loadTransactions() {
@@ -96,7 +100,7 @@ public class Main {
                 int accountId = random.nextInt(3) + 1;
 
                 boolean isIn = random.nextBoolean();
-                String type = isIn ? "IN" : "OUT";
+                String type = isIn ? "IN" : "UT";
 
                 int amount = random.nextInt(220000 - 1000 + 1) + 1000;
 
