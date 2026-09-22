@@ -1,6 +1,7 @@
 package com.miniaml;
 
 import com.miniaml.exception.InvalidTransactionException;
+import com.miniaml.learning.LambdaExamples;
 import com.miniaml.learning.StreamExamples;
 import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
@@ -51,9 +52,20 @@ public class Main {
             testStreamExamples();
             //泛型测试
             testListUtil();
+            //Lambda测试
+            testLambda();
         } catch (InvalidTransactionException e) {
             System.out.println("数据错误：" + e.getMessage());
         }
+    }
+    private static void testLambda(){
+        List<Transaction> transactions = loadTransactions();
+        System.out.println("---Lambda测试---");
+        LambdaExamples.forEachExample(transactions);
+        LambdaExamples.computeIfAbsentExample(transactions);
+        LambdaExamples.methodReferenceExample(transactions);
+        LambdaExamples.removeIfExample(transactions);
+        LambdaExamples.sortExample(transactions);
     }
     private static void testListUtil() {
         List<Transaction> transactions = loadTransactions();
