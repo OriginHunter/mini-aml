@@ -40,3 +40,34 @@ Lv.11  Java 后端实习生候选人
 ### 踩坑
 - `string[0].length()` 是"字段的字符长度"，不是"字段个数"
   → 应该是 `string.length`
+
+
+
+### 2026-09-22（任务 2：泛型工具类 + 例程库）
+
+- 新建 ListUtil 泛型工具类
+  - isEmpty / getFirst / map 三个方法
+  - 泛型方法语法：public static <T> T method(...)
+- 新建 com.miniaml.learning 学习例程包
+  - StreamExamples：filter / map / groupBy / count / max / reduce
+- 理解 Optional 类型
+  - 表达"可能没有值"
+  - ifPresent / orElse / orElseThrow 三种处理方式
+- 理解"例程库"的价值：忘记时回来查
+
+
+### 泛型方法
+
+- 语法：public static <T> T method(...)   <T> 写在返回类型前面
+- 泛型方法的 <T> 是"类型变量"，调用时被推断
+- 多个类型参数：<T, R> map(List<T>, Function<T,R>)
+
+### Optional
+
+- 表达"可能有值，可能没值"
+- 创建：Optional.of(值) / Optional.empty()
+- 处理：
+  - ifPresent(Consumer)  → 有值就执行
+  - orElse(默认值)       → 有值返回值，没值返回默认
+  - orElseThrow(Supplier)→ 没值抛异常
+- 什么时候返回 Optional：方法可能"没有结果"时

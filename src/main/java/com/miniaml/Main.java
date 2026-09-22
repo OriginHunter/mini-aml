@@ -1,12 +1,14 @@
 package com.miniaml;
 
 import com.miniaml.exception.InvalidTransactionException;
+import com.miniaml.learning.StreamExamples;
 import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
 import com.miniaml.model.Transaction;
 import com.miniaml.rule.DailyAmountRule;
 import com.miniaml.rule.LargeAmountRule;
 import com.miniaml.rule.Rule;
+import com.miniaml.util.ListUtil;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -45,11 +47,47 @@ public class Main {
             Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
             //判断规则是否命中
             checkRulesByAccount(byAccount, rules);
+            //Stream测试
+            testStreamExamples();
+            //泛型测试
+            testListUtil();
         } catch (InvalidTransactionException e) {
             System.out.println("数据错误：" + e.getMessage());
         }
     }
+    private static void testListUtil() {
+        List<Transaction> transactions = loadTransactions();
+        System.out.println("---ListUtil测试---");
+        System.out.println("transactions空不空:" + ListUtil.isEmpty(transactions));
+        System.out.println("null空不空:" + ListUtil.isEmpty(null));
 
+        System.out.println("第一笔交易的ID:" + (!transactions.isEmpty() ? ListUtil.getFirst(transactions).getId() : "没有"));
+
+        System.out.println("所有ID:" + ListUtil.map(transactions,t -> t.getId()));
+        System.out.println("所有金额:" + ListUtil.map(transactions,t -> t.getAmount()));
+
+    }
+    private static void testStreamExamples() {
+        List<Transaction> transactions = loadTransactions();
+
+        System.out.println("--- filter ---");
+        StreamExamples.filterExample(transactions);
+
+        System.out.println("--- map ---");
+        StreamExamples.mapExample(transactions);
+
+        System.out.println("--- groupBy ---");
+        StreamExamples.groupByExample(transactions);
+
+        System.out.println("--- count ---");
+        StreamExamples.countExample(transactions);
+
+        System.out.println("--- max ---");
+        StreamExamples.maxExample(transactions);
+
+        System.out.println("--- reduce ---");
+        StreamExamples.reduceExample(transactions);
+    }
     private static List<Transaction> loadTransactions() {
         List<Transaction> transactions = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/transactions.csv"))) {
@@ -100,7 +138,7 @@ public class Main {
                 int accountId = random.nextInt(3) + 1;
 
                 boolean isIn = random.nextBoolean();
-                String type = isIn ? "IN" : "UT";
+                String type = isIn ? "IN" : "OUT";
 
                 int amount = random.nextInt(220000 - 1000 + 1) + 1000;
 
