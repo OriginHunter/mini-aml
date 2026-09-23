@@ -9,12 +9,15 @@ import com.miniaml.model.Transaction;
 import com.miniaml.rule.DailyAmountRule;
 import com.miniaml.rule.LargeAmountRule;
 import com.miniaml.rule.Rule;
+import com.miniaml.rule.SmurfingRule;
 import com.miniaml.util.ListUtil;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -48,17 +51,71 @@ public class Main {
             Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
             //判断规则是否命中
             checkRulesByAccount(byAccount, rules);
-            //Stream测试
-            testStreamExamples();
-            //泛型测试
-            testListUtil();
-            //Lambda测试
-            testLambda();
+            //把按照账户分组的交易按日期分组
+            Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate = groupByAccountDate(byAccount);
+            byAccountDate.forEach((id, t) -> System.out.println("账户" + id + ":" + t));
+            //把每个账户每天交易金额求和
+            sumByAccountDate(byAccountDate);
+            //判断连续三天测试
+            //testConsecutiveDays();
         } catch (InvalidTransactionException e) {
             System.out.println("数据错误：" + e.getMessage());
         }
     }
-    private static void testLambda(){
+
+    private static void testConsecutiveDays() {
+        List<LocalDate> date = List.of(
+                LocalDate.of(2026, 9, 1),
+                LocalDate.of(2026, 9, 2),
+                LocalDate.of(2026, 9, 3),
+                LocalDate.of(2026, 9, 5),
+                LocalDate.of(2026, 9, 6));
+        for (int i = 0;i <= date.size() - 3;i++) {
+            LocalDate date1 = date.get(i);
+            LocalDate date2 = date.get(i + 1);
+            LocalDate date3 = date.get(i + 2);
+
+            long gap1 = ChronoUnit.DAYS.between(date1, date2);
+            long gap2 = ChronoUnit.DAYS.between(date2, date3);
+
+            if (gap1 == 1 && gap2 == 1) {
+                System.out.println(date1 + " " + date2 + " " +date3 + "三天连续");
+            }
+        }
+    }
+
+    private static void sumByAccountDate(Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate) {
+        for (Map.Entry<Long, Map<LocalDate, List<Transaction>>> byAccountDateEntry : byAccountDate.entrySet()) {
+            System.out.println(" id :" + byAccountDateEntry.getKey());
+            for (Map.Entry<LocalDate, List<Transaction>> byDateEntry :  byAccountDateEntry.getValue().entrySet()) {
+
+                System.out.println(" 日期:" + byDateEntry.getKey() + "金额" + sumTransactions(byDateEntry.getValue()));
+            }
+        }
+    }
+
+    private static BigDecimal sumTransactions(List<Transaction> transactions) {
+        return transactions.stream()
+                .collect(Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add));
+    }
+
+    private static Map<Long, Map<LocalDate, List<Transaction>>> groupByAccountDate(Map<Long, List<Transaction>> byAccount) {
+        Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate = new HashMap<Long, Map<LocalDate, List<Transaction>>>();
+        for (Map.Entry<Long, List<Transaction>> entry : byAccount.entrySet()) {
+            byAccountDate.put(entry.getKey(), groupByDate(entry.getValue()));
+        }
+        return byAccountDate;
+    }
+
+    private static Map<LocalDate, List<Transaction>> groupByDate(List<Transaction> transactions) {
+        return transactions.stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getTransTime().toLocalDate(),
+                        TreeMap::new,
+                        Collectors.toList()));
+    }
+
+    private static void testLambda() {
         List<Transaction> transactions = loadTransactions();
         System.out.println("---Lambda测试---");
         LambdaExamples.forEachExample(transactions);
@@ -67,6 +124,7 @@ public class Main {
         LambdaExamples.removeIfExample(transactions);
         LambdaExamples.sortExample(transactions);
     }
+
     private static void testListUtil() {
         List<Transaction> transactions = loadTransactions();
         System.out.println("---ListUtil测试---");
@@ -75,10 +133,11 @@ public class Main {
 
         System.out.println("第一笔交易的ID:" + (!transactions.isEmpty() ? ListUtil.getFirst(transactions).getId() : "没有"));
 
-        System.out.println("所有ID:" + ListUtil.map(transactions,t -> t.getId()));
-        System.out.println("所有金额:" + ListUtil.map(transactions,t -> t.getAmount()));
+        System.out.println("所有ID:" + ListUtil.map(transactions, t -> t.getId()));
+        System.out.println("所有金额:" + ListUtil.map(transactions, t -> t.getAmount()));
 
     }
+
     private static void testStreamExamples() {
         List<Transaction> transactions = loadTransactions();
 
@@ -100,6 +159,7 @@ public class Main {
         System.out.println("--- reduce ---");
         StreamExamples.reduceExample(transactions);
     }
+
     private static List<Transaction> loadTransactions() {
         List<Transaction> transactions = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/transactions.csv"))) {
@@ -110,8 +170,8 @@ public class Main {
                 lineNum++;
                 String[] string = line.split(",");
                 if (string.length != 5) {
-                   throw new InvalidTransactionException(
-                           "第 " + lineNum + " 行字段个数不对：" + line);
+                    throw new InvalidTransactionException(
+                            "第 " + lineNum + " 行字段个数不对：" + line);
                 }
                 try {
                     Long id = Long.parseLong(string[0]);
@@ -175,10 +235,12 @@ public class Main {
         List<Rule> rules = new ArrayList<>();
         rules.add(new LargeAmountRule());
         rules.add(new DailyAmountRule());
+        rules.add(new SmurfingRule());
         return rules;
     }
 
     private static void printHeader() {
+        System.out.println("运行时间：" + LocalDateTime.now());
         System.out.println("""
                 ========================
                       mini-aml
