@@ -58,9 +58,108 @@ public class Main {
             sumByAccountDate(byAccountDate);
             //判断连续三天测试
             //testConsecutiveDays();
+            //
+            testSurfingTransaction();
         } catch (InvalidTransactionException e) {
             System.out.println("数据错误：" + e.getMessage());
         }
+    }
+
+    private static void testSurfingTransaction() {
+        List<Transaction> transactions1 = new ArrayList<>();
+        List<Transaction> transactions2 = new ArrayList<>();
+        List<Transaction> transactions3 = new ArrayList<>();
+        List<Transaction> transactions4 = new ArrayList<>();
+        transactions1.add(new Transaction(
+                10001L,
+                1L,
+                new BigDecimal("40000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 1, 10,30)));
+        transactions1.add(new Transaction(
+                10002L,
+                1L,
+                new BigDecimal("40000.00"),
+                "OUT",
+                LocalDateTime.of(2026, 9, 2, 14,0)));
+        transactions1.add(new Transaction(
+                10003L,
+                1L,
+                new BigDecimal("40000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 3, 16,0)));
+        transactions2.add(new Transaction(
+                10001L,
+                1L,
+                new BigDecimal("40000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 7, 10,30)));
+        transactions2.add(new Transaction(
+                10002L,
+                1L,
+                new BigDecimal("40000.00"),
+                "OUT",
+                LocalDateTime.of(2026, 9, 8, 14,0)));
+        transactions2.add(new Transaction(
+                10003L,
+                1L,
+                new BigDecimal("40000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 10, 16,0)));
+        transactions3.add(new Transaction(
+                10001L,
+                1L,
+                new BigDecimal("40000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 11, 10,30)));
+        transactions3.add(new Transaction(
+                10002L,
+                1L,
+                new BigDecimal("40000.00"),
+                "OUT",
+                LocalDateTime.of(2026, 9, 12, 14,0)));
+        transactions3.add(new Transaction(
+                10003L,
+                1L,
+                new BigDecimal("50000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 13, 16,0)));
+        transactions4.add(new Transaction(
+                10001L,
+                1L,
+                new BigDecimal("40000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 11, 10,30)));
+        transactions4.add(new Transaction(
+                10002L,
+                1L,
+                new BigDecimal("30000.00"),
+                "OUT",
+                LocalDateTime.of(2026, 9, 12, 14,0)));
+        transactions4.add(new Transaction(
+                10003L,
+                1L,
+                new BigDecimal("40000.00"),
+                "IN",
+                LocalDateTime.of(2026, 9, 13, 16,0)));        //规则列表
+        List<Rule> rules = createRules();
+        //按照账户给交易分组
+        Map<Long, List<Transaction>> byAccount1 = groupByAccount(transactions1);
+        Map<Long, List<Transaction>> byAccount2 = groupByAccount(transactions2);
+        Map<Long, List<Transaction>> byAccount3 = groupByAccount(transactions3);
+        Map<Long, List<Transaction>> byAccount4 = groupByAccount(transactions4);
+        //判断规则是否命中
+        System.out.println("===== 场景 1：连续 3 天 4 万 =====");
+        checkRulesByAccount(byAccount1, rules);
+
+        System.out.println("===== 场景 2：不连续 =====");
+        checkRulesByAccount(byAccount2, rules);
+
+        System.out.println("===== 场景 3：有一天 5 万 =====");
+        checkRulesByAccount(byAccount3, rules);
+
+        System.out.println("===== 场景 4：有一天 3 万 =====");
+        checkRulesByAccount(byAccount4, rules);
     }
 
     private static void testConsecutiveDays() {
@@ -70,7 +169,7 @@ public class Main {
                 LocalDate.of(2026, 9, 3),
                 LocalDate.of(2026, 9, 5),
                 LocalDate.of(2026, 9, 6));
-        for (int i = 0;i <= date.size() - 3;i++) {
+        for (int i = 0; i <= date.size() - 3; i++) {
             LocalDate date1 = date.get(i);
             LocalDate date2 = date.get(i + 1);
             LocalDate date3 = date.get(i + 2);
@@ -79,7 +178,7 @@ public class Main {
             long gap2 = ChronoUnit.DAYS.between(date2, date3);
 
             if (gap1 == 1 && gap2 == 1) {
-                System.out.println(date1 + " " + date2 + " " +date3 + "三天连续");
+                System.out.println(date1 + " " + date2 + " " + date3 + "三天连续");
             }
         }
     }
@@ -87,7 +186,7 @@ public class Main {
     private static void sumByAccountDate(Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate) {
         for (Map.Entry<Long, Map<LocalDate, List<Transaction>>> byAccountDateEntry : byAccountDate.entrySet()) {
             System.out.println(" id :" + byAccountDateEntry.getKey());
-            for (Map.Entry<LocalDate, List<Transaction>> byDateEntry :  byAccountDateEntry.getValue().entrySet()) {
+            for (Map.Entry<LocalDate, List<Transaction>> byDateEntry : byAccountDateEntry.getValue().entrySet()) {
 
                 System.out.println(" 日期:" + byDateEntry.getKey() + "金额" + sumTransactions(byDateEntry.getValue()));
             }
