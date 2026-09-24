@@ -33,7 +33,7 @@ Transaction t2 = new Transaction(10002L, 1L,
 Transaction t3 = new Transaction(10003L, 1L,
         new BigDecimal("60000.00"), "IN",
         LocalDateTime.of(2026, 9, 10, 10, 30));
-Rule rule = new LargeAmountRule();
+Rule<List<Transaction>> rule = new LargeAmountRule();
         System.out.println("金额 49999.99 | " + rule.name() + " | 命中: " + rule.hit(t1));
         System.out.println("金额 50000.00 | " + rule.name() + " | 命中: " + rule.hit(t2));
         System.out.println("金额 60000.00 | " + rule.name() + " | 命中: " + rule.hit(t3));

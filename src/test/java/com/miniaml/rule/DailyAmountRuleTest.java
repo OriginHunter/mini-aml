@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DailyAmountRuleTest {
     @Test
-    void 一笔200000应该命中() {
+    void hit_singleAmount200000_returnsTrue() {
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(new Transaction(
                 10001L,
@@ -21,12 +21,12 @@ public class DailyAmountRuleTest {
                 "IN",
                 LocalDateTime.of(2026, 9, 10, 10, 30)));
 
-        Rule rule = new DailyAmountRule();
-        boolean 命中 = rule.hit(transactions);
-        assertTrue(命中);
+        Rule<List<Transaction>> rule = new DailyAmountRule();
+        boolean hit = rule.hit(transactions);
+        assertTrue(hit);
     }
     @Test
-    void 多笔超过200000应该命中() {
+    void hit_multipleAmountsOver200000_returnsTrue() {
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(new Transaction(
                 10001L,
@@ -39,14 +39,14 @@ public class DailyAmountRuleTest {
                 1L,
                 new BigDecimal("120000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 11, 10, 30)));
+                LocalDateTime.of(2026, 9, 10, 11, 30)));
 
-        Rule rule = new DailyAmountRule();
-        boolean 命中 = rule.hit(transactions);
-        assertTrue(命中);
+        Rule<List<Transaction>> rule = new DailyAmountRule();
+        boolean hit = rule.hit(transactions);
+        assertTrue(hit);
     }
     @Test
-    void 一笔190000不应该命中() {
+    void hit_singleAmount190000_returnsFalse() {
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(new Transaction(
                 10001L,
@@ -55,8 +55,8 @@ public class DailyAmountRuleTest {
                 "IN",
                 LocalDateTime.of(2026, 9, 10, 10, 30)));
 
-        Rule rule = new DailyAmountRule();
-        boolean 命中 = rule.hit(transactions);
-        assertFalse(命中);
+        Rule<List<Transaction>> rule = new DailyAmountRule();
+        boolean hit = rule.hit(transactions);
+        assertFalse(hit);
     }
 }

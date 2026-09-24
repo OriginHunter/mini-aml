@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LargeAmountRuleTest {
     @Test
-    void 交易60000_应该命中() {
+    void hit_amount60000_returnsTrue() {
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(new Transaction(
                 10001L,
@@ -21,12 +21,12 @@ public class LargeAmountRuleTest {
                 "IN",
                 LocalDateTime.of(2026, 9, 10, 10, 30)));
 
-        Rule rule = new LargeAmountRule();
-        boolean 命中 = rule.hit(transactions);
-        assertTrue(命中);
+        Rule<List<Transaction>> rule = new LargeAmountRule();
+        boolean hit = rule.hit(transactions);
+        assertTrue(hit);
     }
     @Test
-    void 交易49999_99_不应该命中() {
+    void hit_amount49999_99_returnsFalse() {
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(new Transaction(
                 10001L,
@@ -35,12 +35,12 @@ public class LargeAmountRuleTest {
                 "IN",
                 LocalDateTime.of(2026, 9, 10, 10, 30)));
 
-        Rule rule = new LargeAmountRule();
-        boolean 命中 = rule.hit(transactions);
-        assertFalse(命中);
+        Rule<List<Transaction>> rule = new LargeAmountRule();
+        boolean hit = rule.hit(transactions);
+        assertFalse(hit);
     }
     @Test
-    void 交易50000_应该命中() {
+    void hit_amount50000_returnsTrue() {
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(new Transaction(
                 10001L,
@@ -49,8 +49,8 @@ public class LargeAmountRuleTest {
                 "IN",
                 LocalDateTime.of(2026, 9, 10, 10, 30)));
 
-        Rule rule = new LargeAmountRule();
-        boolean 命中 = rule.hit(transactions);
-        assertTrue(命中);
+        Rule<List<Transaction>> rule = new LargeAmountRule();
+        boolean hit = rule.hit(transactions);
+        assertTrue(hit);
     }
 }
