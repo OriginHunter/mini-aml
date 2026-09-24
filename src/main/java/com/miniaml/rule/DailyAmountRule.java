@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DailyAmountRule implements Rule {
+public class DailyAmountRule implements Rule<List<Transaction>> {
     private static final BigDecimal DAILY_THRESHOLD = new BigDecimal("200000.00");
 
     @Override

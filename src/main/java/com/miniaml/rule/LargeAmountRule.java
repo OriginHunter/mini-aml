@@ -5,7 +5,7 @@ import com.miniaml.model.Transaction;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class LargeAmountRule implements Rule {
+public class LargeAmountRule implements Rule<List<Transaction>> {
     private static final BigDecimal THRESHOLD = new BigDecimal("50000.00");
 
     @Override

@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,7 @@ public class Main {
             //打印交易
             printTransactions(transactions);
             //规则列表
-            List<Rule> rules = createRules();
+            List<Rule<List<Transaction>>> rules = createRules();
             //按照账户给交易分组
             Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
             //判断规则是否命中
@@ -56,16 +55,14 @@ public class Main {
             byAccountDate.forEach((id, t) -> System.out.println("账户" + id + ":" + t));
             //把每个账户每天交易金额求和
             sumByAccountDate(byAccountDate);
-            //判断连续三天测试
-            //testConsecutiveDays();
             //
-            testSurfingTransaction();
+            testSmurfingTransaction();
         } catch (InvalidTransactionException e) {
             System.out.println("数据错误：" + e.getMessage());
         }
     }
 
-    private static void testSurfingTransaction() {
+    private static void testSmurfingTransaction() {
         List<Transaction> transactions1 = new ArrayList<>();
         List<Transaction> transactions2 = new ArrayList<>();
         List<Transaction> transactions3 = new ArrayList<>();
@@ -142,7 +139,7 @@ public class Main {
                 new BigDecimal("40000.00"),
                 "IN",
                 LocalDateTime.of(2026, 9, 13, 16,0)));        //规则列表
-        List<Rule> rules = createRules();
+        List<Rule<List<Transaction>>> rules = createRules();
         //按照账户给交易分组
         Map<Long, List<Transaction>> byAccount1 = groupByAccount(transactions1);
         Map<Long, List<Transaction>> byAccount2 = groupByAccount(transactions2);
@@ -160,27 +157,6 @@ public class Main {
 
         System.out.println("===== 场景 4：有一天 3 万 =====");
         checkRulesByAccount(byAccount4, rules);
-    }
-
-    private static void testConsecutiveDays() {
-        List<LocalDate> date = List.of(
-                LocalDate.of(2026, 9, 1),
-                LocalDate.of(2026, 9, 2),
-                LocalDate.of(2026, 9, 3),
-                LocalDate.of(2026, 9, 5),
-                LocalDate.of(2026, 9, 6));
-        for (int i = 0; i <= date.size() - 3; i++) {
-            LocalDate date1 = date.get(i);
-            LocalDate date2 = date.get(i + 1);
-            LocalDate date3 = date.get(i + 2);
-
-            long gap1 = ChronoUnit.DAYS.between(date1, date2);
-            long gap2 = ChronoUnit.DAYS.between(date2, date3);
-
-            if (gap1 == 1 && gap2 == 1) {
-                System.out.println(date1 + " " + date2 + " " + date3 + "三天连续");
-            }
-        }
     }
 
     private static void sumByAccountDate(Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate) {
@@ -330,8 +306,8 @@ public class Main {
         }
     }
 
-    private static List<Rule> createRules() {
-        List<Rule> rules = new ArrayList<>();
+    private static List<Rule<List<Transaction>>> createRules() {
+        List<Rule<List<Transaction>>> rules = new ArrayList<>();
         rules.add(new LargeAmountRule());
         rules.add(new DailyAmountRule());
         rules.add(new SmurfingRule());
@@ -369,11 +345,11 @@ public class Main {
                 .collect(Collectors.groupingBy(Transaction::getAccountId));
     }
 
-    private static void checkRulesByAccount(Map<Long, List<Transaction>> byAccount, List<Rule> rules) {
+    private static void checkRulesByAccount(Map<Long, List<Transaction>> byAccount, List<Rule<List<Transaction>>> rules) {
         for (Map.Entry<Long, List<Transaction>> entry : byAccount.entrySet()) {
             System.out.println("========== 账户 " + entry.getKey() + " ==========");
             System.out.println("该账户共有 " + entry.getValue().size() + " 笔交易");
-            for (Rule rule : rules) {
+            for (Rule<List<Transaction>> rule : rules) {
                 if (rule.hit(entry.getValue())) {
                     System.out.println("规则:" + rule.name() + " ⚠ 命中");
                 } else {
