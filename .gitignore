@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### 本地数据库配置（含密码，不能进 Git） ###
+src/main/resources/db.properties
