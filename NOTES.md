@@ -466,3 +466,41 @@ wip:      半成品
       ↓
     Java 后端实习
 ```
+
+更新日期：2026-09-29
+等级：Lv.13  数据库工程师（初级）
+XP：5000 / 6500
+
+第 3 章进度：约 40%
+├─ MySQL 环境        ✅
+├─ SQL 基础          ✅
+├─ JDBC 连接         ✅
+├─ 配置分离          ✅
+├─ 数据持久化        ✅
+└─ 高级 SQL（JOIN等） ⬜
+
+项目进度：
+v0.1 ██████████ 100%
+v0.2 ██████████ 100%
+v0.3 ██████████ 100%   ← 刚完成
+v0.4 ⬜
+v0.5 ⬜
+v1.0 ⬜
+
+### 2026-09-28 ~ 09-29（第 3 章：MySQL + JDBC）
+
+- MySQL 8.4.11 环境搭建 + PATH 配置
+- SQL 基础：建库 / 建表 / 增删改查 / 条件 / 排序 / 分组
+- JDBC 连接 MySQL
+- JDBC 四件套：SELECT / INSERT / UPDATE / DELETE
+- PreparedStatement 的 ? 占位符（防 SQL 注入）
+- 数据库配置抽离：db.properties + .gitignore + DbConfig
+- 完成数据源切换：CSV → MySQL
+- 更新 README 和 NOTES 到 v0.3
+
+### 关键理解
+- 表名/列名用 snake_case（account_id）
+- 金额用 DECIMAL，对应 Java 的 BigDecimal
+- JDBC 5 步：DriverManager → Connection → PreparedStatement → ResultSet → close
+- ? 占位符按位置填（从 1 开始）
+- SELECT 用 executeQuery，INSERT/UPDATE/DELETE 用 executeUpdate

@@ -1,57 +1,23 @@
-# mini-aml
+## 当前版本 v0.3
 
-一个用于学习 Java 后端开发的最小反洗钱（AML）交易监测系统。
+相比 v0.2，新增：
 
-## 项目简介
-（保持）
-
-## 当前版本 v0.2
-
-相比 v0.1，新增：
-
-- 3 条 AML 规则：
-  - 单笔大额交易（≥ 5 万）
-  - 单日累计（≥ 20 万）
-  - 拆分交易 Smurfing（连续 3 天每天 4~5 万）
-- 按账户 + 日期三层分组统计
-- CSV 文件读写（交易数据从文件加载）
-- 脏数据检测 + 自定义异常
-- 泛型规则引擎（Rule<T>）
-- 单元测试覆盖率 88%
+- **数据持久化**：交易数据存储于 MySQL 数据库
+  - 数据库：mini_aml
+  - 表：transactions
+- **JDBC 数据库操作**
+  - SELECT / INSERT / UPDATE / DELETE 完整实现
+  - 使用 PreparedStatement 占位符防 SQL 注入
+- **配置分离**
+  - 数据库配置抽到 db.properties（不进 Git）
+  - 提供 db.properties.example 模板
+  - DbConfig 工具类读取配置
 
 ## 技术栈
-（保持：Java 17 / Maven / Git）
-再补充：
-- JUnit 5 测试
-- JaCoCo 覆盖率
 
-## 项目结构
-（更新，加入 learning / util / exception 包）
-
-    src/main/java/com/miniaml/
-    ├── Main.java                    程序入口
-    ├── model/                       数据类
-    │   ├── Customer.java
-    │   ├── Account.java
-    │   ├── Transaction.java
-    │   └── SuspiciousCase.java
-    ├── rule/                        规则
-    │   ├── Rule.java                泛型规则接口
-    │   ├── LargeAmountRule.java
-    │   ├── DailyAmountRule.java
-    │   └── SmurfingRule.java
-    ├── util/
-    │   └── ListUtil.java            泛型工具类
-    ├── exception/
-    │   └── InvalidTransactionException.java
-    └── learning/                    学习例程库
-        ├── StreamExamples.java
-        └── LambdaExamples.java
-
-## 如何运行
-（保持）
-
-## 运行测试
-
-```bash
-mvn test
+- Java 17
+- Maven
+- MySQL 8.4
+- JDBC（mysql-connector-j）
+- JUnit 5 + JaCoCo
+- Git

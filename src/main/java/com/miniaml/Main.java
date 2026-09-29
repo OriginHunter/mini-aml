@@ -1,8 +1,5 @@
 package com.miniaml;
 
-import com.miniaml.exception.InvalidTransactionException;
-import com.miniaml.learning.LambdaExamples;
-import com.miniaml.learning.StreamExamples;
 import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
 import com.miniaml.model.Transaction;
@@ -11,14 +8,11 @@ import com.miniaml.rule.LargeAmountRule;
 import com.miniaml.rule.Rule;
 import com.miniaml.rule.SmurfingRule;
 import com.miniaml.util.DbConfig;
-import com.miniaml.util.ListUtil;
 
-import java.io.*;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,42 +29,28 @@ public class Main {
                 "622200001",
                 customer.getId(),
                 new BigDecimal("100000.00"));
-        try {
-            Transaction newT = new Transaction(
-                    99999L, 1L,
-                    new BigDecimal("88888.00"),
-                    "IN",
-                    LocalDateTime.of(2026, 9, 28, 16, 30));
-            //增添新交易
-            insertTransaction(newT);
-            //更改交易
-            updateAmount(99999L, new BigDecimal("12345.00"));
-            //创建交易列表
-            List<Transaction> transactions = loadTransactionsFromDb();
-            //打印标题
-            printHeader();
-            //打印客户与账户
-            printCustomerInfo(customer, account);
-            //打印交易
-            printTransactions(transactions);
-            //规则列表
-            List<Rule<List<Transaction>>> rules = createRules();
-            //按照账户给交易分组
-            Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
-            //判断规则是否命中
-            checkRulesByAccount(byAccount, rules);
-            //把按照账户分组的交易按日期分组
-            Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate = groupByAccountDate(byAccount);
-            byAccountDate.forEach((id, t) -> System.out.println("账户" + id + ":" + t));
-            //把每个账户每天交易金额求和
-            sumByAccountDate(byAccountDate);
-            //连续三天40000~50000测试
-            testSmurfingTransaction();
-            //删除交易
-            deleteById(99999L);
-        } catch (InvalidTransactionException e) {
-            System.out.println("数据错误：" + e.getMessage());
-        }
+
+        //创建交易列表
+        List<Transaction> transactions = loadTransactionsFromDb();
+        //打印标题
+        printHeader();
+        //打印客户与账户
+        printCustomerInfo(customer, account);
+        //打印交易
+        printTransactions(transactions);
+        //规则列表
+        List<Rule<List<Transaction>>> rules = createRules();
+        //按照账户给交易分组
+        Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
+        //判断规则是否命中
+        checkRulesByAccount(byAccount, rules);
+        //把按照账户分组的交易按日期分组
+        Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate = groupByAccountDate(byAccount);
+        byAccountDate.forEach((id, t) -> System.out.println("账户" + id + ":" + t));
+        //把每个账户每天交易金额求和
+        sumByAccountDate(byAccountDate);
+        //连续三天40000~50000测试
+        testSmurfingTransaction();
     }
 
     private static void deleteById(Long id) {
@@ -91,6 +71,7 @@ public class Main {
             System.out.println("删除失败：" + e.getMessage());
         }
     }
+
     private static void updateAmount(Long id, BigDecimal newAmount) {
         String url = DbConfig.getUrl();
         String user = DbConfig.getUser();
@@ -174,73 +155,73 @@ public class Main {
                 1L,
                 new BigDecimal("40000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 1, 10,30)));
+                LocalDateTime.of(2026, 9, 1, 10, 30)));
         transactions1.add(new Transaction(
                 10002L,
                 1L,
                 new BigDecimal("40000.00"),
                 "OUT",
-                LocalDateTime.of(2026, 9, 2, 14,0)));
+                LocalDateTime.of(2026, 9, 2, 14, 0)));
         transactions1.add(new Transaction(
                 10003L,
                 1L,
                 new BigDecimal("40000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 3, 16,0)));
+                LocalDateTime.of(2026, 9, 3, 16, 0)));
         transactions2.add(new Transaction(
                 10001L,
                 1L,
                 new BigDecimal("40000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 7, 10,30)));
+                LocalDateTime.of(2026, 9, 7, 10, 30)));
         transactions2.add(new Transaction(
                 10002L,
                 1L,
                 new BigDecimal("40000.00"),
                 "OUT",
-                LocalDateTime.of(2026, 9, 8, 14,0)));
+                LocalDateTime.of(2026, 9, 8, 14, 0)));
         transactions2.add(new Transaction(
                 10003L,
                 1L,
                 new BigDecimal("40000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 10, 16,0)));
+                LocalDateTime.of(2026, 9, 10, 16, 0)));
         transactions3.add(new Transaction(
                 10001L,
                 1L,
                 new BigDecimal("40000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 11, 10,30)));
+                LocalDateTime.of(2026, 9, 11, 10, 30)));
         transactions3.add(new Transaction(
                 10002L,
                 1L,
                 new BigDecimal("40000.00"),
                 "OUT",
-                LocalDateTime.of(2026, 9, 12, 14,0)));
+                LocalDateTime.of(2026, 9, 12, 14, 0)));
         transactions3.add(new Transaction(
                 10003L,
                 1L,
                 new BigDecimal("50000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 13, 16,0)));
+                LocalDateTime.of(2026, 9, 13, 16, 0)));
         transactions4.add(new Transaction(
                 10001L,
                 1L,
                 new BigDecimal("40000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 11, 10,30)));
+                LocalDateTime.of(2026, 9, 11, 10, 30)));
         transactions4.add(new Transaction(
                 10002L,
                 1L,
                 new BigDecimal("30000.00"),
                 "OUT",
-                LocalDateTime.of(2026, 9, 12, 14,0)));
+                LocalDateTime.of(2026, 9, 12, 14, 0)));
         transactions4.add(new Transaction(
                 10003L,
                 1L,
                 new BigDecimal("40000.00"),
                 "IN",
-                LocalDateTime.of(2026, 9, 13, 16,0)));        //规则列表
+                LocalDateTime.of(2026, 9, 13, 16, 0)));        //规则列表
         List<Rule<List<Transaction>>> rules = createRules();
         //按照账户给交易分组
         Map<Long, List<Transaction>> byAccount1 = groupByAccount(transactions1);
