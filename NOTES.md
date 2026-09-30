@@ -504,3 +504,72 @@ v1.0 ⬜
 - JDBC 5 步：DriverManager → Connection → PreparedStatement → ResultSet → close
 - ? 占位符按位置填（从 1 开始）
 - SELECT 用 executeQuery，INSERT/UPDATE/DELETE 用 executeUpdate
+
+### 2026-09-30（Day 1：数据库表设计）
+
+- 设计并建立 5 张表：
+  - customer（客户）
+  - account（账户，外键 → customer）
+  - transaction（交易，外键 → account）
+  - rule_config（规则配置）
+  - suspicious_case（可疑案例，外键 → transaction）
+- 建立外键约束、唯一索引
+- 插入测试数据：
+  - customer 2 条
+  - account 3 条
+  - transaction 5 条
+  - rule_config 3 条
+- 画 ER 图
+
+### 关键理解
+- 表名用单数（阿里规范）
+- 金额用 DECIMAL(15,2)，不用 FLOAT/DOUBLE
+- 身份证 / 账号等标识用 VARCHAR，不用数字类型
+- 代理主键（id）+ 业务主键（xxx_no）分离
+- rule_name（给人看）vs rule_type（给程序用）
+
+┌─────────────────┐
+│    customer     │
+│─────────────────│
+│ id (PK)         │
+│ name            │
+│ id_card (UQ)    │
+│ created_at      │
+└────────┬────────┘
+         │ 1 : N
+         │
+         ▼
+┌─────────────────┐
+│    account      │
+│─────────────────│
+│ id (PK)         │
+│ account_no (UQ) │
+│ customer_id (FK)│
+│ balance         │
+│ created_at      │
+└────────┬────────┘
+         │ 1 : N
+         │
+         ▼
+┌─────────────────┐        ┌─────────────────┐
+│  transaction    │        │   rule_config   │
+│─────────────────│        │─────────────────│
+│ id (PK)         │        │ id (PK)         │
+│ account_id (FK) │        │ rule_name (UQ)  │
+│ amount          │        │ rule_type       │
+│ type            │        │ threshold       │
+│ trans_time      │        │ enabled         │
+└────────┬────────┘        │ created_at      │
+         │ 1 : N           └─────────────────┘
+         │
+         ▼
+┌─────────────────┐
+│ suspicious_case │
+│─────────────────│
+│ id (PK, AI)     │
+│ case_no (UQ)    │
+│ transaction_id  │
+│ rule_name       │
+│ status          │
+│ create_time     │
+└─────────────────┘
