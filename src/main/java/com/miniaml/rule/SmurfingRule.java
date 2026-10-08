@@ -12,56 +12,64 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class SmurfingRule implements Rule<List<Transaction>> {
-    private static final BigDecimal MAX_AMOUNT = new BigDecimal("50000");
+
     private static final BigDecimal MIN_AMOUNT = new BigDecimal("40000");
+    private static final BigDecimal MAX_AMOUNT = new BigDecimal("50000");
 
     @Override
     public boolean hit(List<Transaction> transactions) {
-        Map<LocalDate, List<Transaction>> byDate = groupByDate(transactions);
-        List<LocalDate> dates = new ArrayList<>();
-        List<BigDecimal> amounts = new ArrayList<>();
-        for (Map.Entry<LocalDate, List<Transaction>> entry : byDate.entrySet()) {
-            dates.add(entry.getKey());
-            amounts.add(sumTransactions(entry.getValue()));
-        }
-        for (int i = 0;i <= dates.size() - 3;i++) {
-            LocalDate date1 = dates.get(i);
-            LocalDate date2 = dates.get(i + 1);
-            LocalDate date3 = dates.get(i + 2);
-
-            long gap1 = ChronoUnit.DAYS.between(date1, date2);
-            long gap2 = ChronoUnit.DAYS.between(date2, date3);
-
-            if (gap1 == 1 && gap2 == 1) {
-                BigDecimal amount1 = amounts.get(i);
-                BigDecimal amount2 = amounts.get(i + 1);
-                BigDecimal amount3 = amounts.get(i + 2);
-                if(inRange(amount1) && inRange(amount2) && inRange(amount3)) {
-                    return true;
-                }
-            }
-
-        }
-        return false;
+        return !findHits(transactions).isEmpty();
     }
 
     @Override
-    public String name() {
-        return "拆分交易(连续3天每天4-5万)";
-    }
-
-    private boolean inRange(BigDecimal amount) {
-        return (MAX_AMOUNT.compareTo(amount) > 0) && (MIN_AMOUNT.compareTo(amount) <= 0);
-    }
-    private static Map<LocalDate, List<Transaction>> groupByDate(List<Transaction> transactions) {
-        return transactions.stream()
+    public List<Transaction> findHits(List<Transaction> transactions) {
+        Map<LocalDate, List<Transaction>> byDate = transactions.stream()
                 .collect(Collectors.groupingBy(
                         t -> t.getTransTime().toLocalDate(),
                         TreeMap::new,
                         Collectors.toList()));
+
+        List<LocalDate> dates = new ArrayList<>(byDate.keySet());
+        List<Transaction> hits = new ArrayList<>();
+
+        for (int i = 0; i <= dates.size() - 3; i++) {
+            LocalDate d1 = dates.get(i);
+            LocalDate d2 = dates.get(i + 1);
+            LocalDate d3 = dates.get(i + 2);
+
+            long gap1 = ChronoUnit.DAYS.between(d1, d2);
+            long gap2 = ChronoUnit.DAYS.between(d2, d3);
+
+            if (gap1 == 1 && gap2 == 1) {
+                BigDecimal total1 = sumOf(byDate.get(d1));
+                BigDecimal total2 = sumOf(byDate.get(d2));
+                BigDecimal total3 = sumOf(byDate.get(d3));
+
+                if (inRange(total1) && inRange(total2) && inRange(total3)) {
+                    hits.addAll(byDate.get(d1));
+                    hits.addAll(byDate.get(d2));
+                    hits.addAll(byDate.get(d3));
+                }
+            }
+        }
+        return hits;
     }
-    private static BigDecimal sumTransactions(List<Transaction> transactions) {
-        return transactions.stream()
-                .collect(Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add));
+
+    private BigDecimal sumOf(List<Transaction> transactions) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Transaction t : transactions) {
+            total = total.add(t.getAmount());
+        }
+        return total;
+    }
+
+    private boolean inRange(BigDecimal amount) {
+        return amount.compareTo(MIN_AMOUNT) >= 0
+                && amount.compareTo(MAX_AMOUNT) < 0;
+    }
+
+    @Override
+    public String name() {
+        return "拆分交易（连续3天每天4-5万）";
     }
 }

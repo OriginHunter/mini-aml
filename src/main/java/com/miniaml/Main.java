@@ -1,13 +1,16 @@
 package com.miniaml;
 
 import com.miniaml.dao.TransactionDao;
+import com.miniaml.dao.SuspiciousCaseDao;
 import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
+import com.miniaml.model.SuspiciousCase;
 import com.miniaml.model.Transaction;
 import com.miniaml.rule.DailyAmountRule;
 import com.miniaml.rule.LargeAmountRule;
 import com.miniaml.rule.Rule;
 import com.miniaml.rule.SmurfingRule;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,6 +19,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
+
+    private static long caseCounter = -1;
+
     public static void main(String[] args) {
         //创建客户
         Customer customer = new Customer(
@@ -31,6 +37,7 @@ public class Main {
 
         //新建dao对象
         TransactionDao transactionDao = new TransactionDao();
+        SuspiciousCaseDao suspiciousCaseDao = new SuspiciousCaseDao();
         //创建交易列表
         List<Transaction> transactions = transactionDao.findAll();
         //打印标题
@@ -44,111 +51,31 @@ public class Main {
         //按照账户给交易分组
         Map<Long, List<Transaction>> byAccount = groupByAccount(transactions);
         //判断规则是否命中
-        checkRulesByAccount(byAccount, rules);
-        //把按照账户分组的交易按日期分组
+        checkRulesByAccount(byAccount, rules, suspiciousCaseDao);
+        // 最后打印所有案例
+        System.out.println("\n===== 已生成的可疑案例 =====");
+        printCases(suspiciousCaseDao.findAll());        //把按照账户分组的交易按日期分组
         Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate = groupByAccountDate(byAccount);
         byAccountDate.forEach((id, t) -> System.out.println("账户" + id + ":" + t));
         //把每个账户每天交易金额求和
         sumByAccountDate(byAccountDate);
-        //连续三天40000~50000测试
-        testSmurfingTransaction();
+    }
+    private static String nextCaseNo(SuspiciousCaseDao dao) {
+        if (caseCounter < 0) {
+            caseCounter = dao.findAll().size();
+        }
+        caseCounter++;
+        return String.format("CASE-%04d", caseCounter);
     }
 
-    private static void testSmurfingTransaction() {
-        List<Transaction> transactions1 = new ArrayList<>();
-        List<Transaction> transactions2 = new ArrayList<>();
-        List<Transaction> transactions3 = new ArrayList<>();
-        List<Transaction> transactions4 = new ArrayList<>();
-        transactions1.add(new Transaction(
-                10001L,
-                1L,
-                new BigDecimal("40000.00"),
-                "IN",
-                LocalDateTime.of(2026, 9, 1, 10, 30)));
-        transactions1.add(new Transaction(
-                10002L,
-                1L,
-                new BigDecimal("40000.00"),
-                "OUT",
-                LocalDateTime.of(2026, 9, 2, 14, 0)));
-        transactions1.add(new Transaction(
-                10003L,
-                1L,
-                new BigDecimal("40000.00"),
-                "IN",
-                LocalDateTime.of(2026, 9, 3, 16, 0)));
-        transactions2.add(new Transaction(
-                10001L,
-                1L,
-                new BigDecimal("40000.00"),
-                "IN",
-                LocalDateTime.of(2026, 9, 7, 10, 30)));
-        transactions2.add(new Transaction(
-                10002L,
-                1L,
-                new BigDecimal("40000.00"),
-                "OUT",
-                LocalDateTime.of(2026, 9, 8, 14, 0)));
-        transactions2.add(new Transaction(
-                10003L,
-                1L,
-                new BigDecimal("40000.00"),
-                "IN",
-                LocalDateTime.of(2026, 9, 10, 16, 0)));
-        transactions3.add(new Transaction(
-                10001L,
-                1L,
-                new BigDecimal("40000.00"),
-                "IN",
-                LocalDateTime.of(2026, 9, 11, 10, 30)));
-        transactions3.add(new Transaction(
-                10002L,
-                1L,
-                new BigDecimal("40000.00"),
-                "OUT",
-                LocalDateTime.of(2026, 9, 12, 14, 0)));
-        transactions3.add(new Transaction(
-                10003L,
-                1L,
-                new BigDecimal("50000.00"),
-                "IN",
-                LocalDateTime.of(2026, 9, 13, 16, 0)));
-        transactions4.add(new Transaction(
-                10001L,
-                1L,
-                new BigDecimal("40000.00"),
-                "IN",
-                LocalDateTime.of(2026, 9, 11, 10, 30)));
-        transactions4.add(new Transaction(
-                10002L,
-                1L,
-                new BigDecimal("30000.00"),
-                "OUT",
-                LocalDateTime.of(2026, 9, 12, 14, 0)));
-        transactions4.add(new Transaction(
-                10003L,
-                1L,
-                new BigDecimal("40000.00"),
-                "IN",
-                LocalDateTime.of(2026, 9, 13, 16, 0)));        //规则列表
-        List<Rule<List<Transaction>>> rules = createRules();
-        //按照账户给交易分组
-        Map<Long, List<Transaction>> byAccount1 = groupByAccount(transactions1);
-        Map<Long, List<Transaction>> byAccount2 = groupByAccount(transactions2);
-        Map<Long, List<Transaction>> byAccount3 = groupByAccount(transactions3);
-        Map<Long, List<Transaction>> byAccount4 = groupByAccount(transactions4);
-        //判断规则是否命中
-        System.out.println("===== 场景 1：连续 3 天 4 万 =====");
-        checkRulesByAccount(byAccount1, rules);
-
-        System.out.println("===== 场景 2：不连续 =====");
-        checkRulesByAccount(byAccount2, rules);
-
-        System.out.println("===== 场景 3：有一天 5 万 =====");
-        checkRulesByAccount(byAccount3, rules);
-
-        System.out.println("===== 场景 4：有一天 3 万 =====");
-        checkRulesByAccount(byAccount4, rules);
+    private static void printCases(List<SuspiciousCase> cases) {
+        if (cases.isEmpty()) {
+            System.out.println("（暂无案例）");
+            return;
+        }
+        for (SuspiciousCase c : cases) {
+            System.out.println(c);
+        }
     }
 
     private static void sumByAccountDate(Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate) {
@@ -222,17 +149,37 @@ public class Main {
                 .collect(Collectors.groupingBy(Transaction::getAccountId));
     }
 
-    private static void checkRulesByAccount(Map<Long, List<Transaction>> byAccount, List<Rule<List<Transaction>>> rules) {
+    private static void checkRulesByAccount(
+            Map<Long, List<Transaction>> byAccount,
+            List<Rule<List<Transaction>>> rules,
+            SuspiciousCaseDao suspiciousCaseDao) {
+
         for (Map.Entry<Long, List<Transaction>> entry : byAccount.entrySet()) {
-            System.out.println("========== 账户 " + entry.getKey() + " ==========");
-            System.out.println("该账户共有 " + entry.getValue().size() + " 笔交易");
+            Long accountId = entry.getKey();
+            List<Transaction> txns = entry.getValue();
+
+            System.out.println("========== 账户 " + accountId + " ==========");
+            System.out.println("该账户共有 " + txns.size() + " 笔交易");
+
             for (Rule<List<Transaction>> rule : rules) {
-                if (rule.hit(entry.getValue())) {
-                    System.out.println("规则:" + rule.name() + " ⚠ 命中");
-                } else {
+                List<Transaction> hits = rule.findHits(txns);
+
+                if (hits.isEmpty()) {
                     System.out.println("规则:" + rule.name() + " 未命中");
+                } else {
+                    System.out.println("规则:" + rule.name() + " ⚠ 命中（" + hits.size() + " 笔）");
+
+                    for (Transaction t : hits) {
+                        SuspiciousCase c = new SuspiciousCase(
+                                nextCaseNo(suspiciousCaseDao),
+                                t.getId(),
+                                rule.name(),
+                                LocalDateTime.now(),
+                                "NEW"
+                        );
+                        suspiciousCaseDao.insert(c);
+                    }
                 }
             }
         }
-    }
-}
+    }}

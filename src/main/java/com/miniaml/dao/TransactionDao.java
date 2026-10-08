@@ -16,7 +16,7 @@ public class TransactionDao {
 
     public List<Transaction> findAll() {
 
-        String sql = "SELECT id, account_id, amount, type, trans_time FROM transactions";
+        String sql = "SELECT id, account_id, amount, type, trans_time FROM `transaction`";
 
         List<Transaction> transactions = new ArrayList<>();
 
@@ -42,7 +42,7 @@ public class TransactionDao {
     }
 
     public void deleteById(Long id) {
-        String sql = "DELETE FROM transactions WHERE id = ?";
+        String sql = "DELETE FROM `transaction` WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -57,7 +57,7 @@ public class TransactionDao {
     }
 
     public void updateAmount(Long id, BigDecimal newAmount) {
-        String sql = "UPDATE transactions SET amount = ? WHERE id = ?";
+        String sql = "UPDATE `transaction` SET amount = ? WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -73,7 +73,7 @@ public class TransactionDao {
     }
 
     public void insertTransaction(Transaction t) {
-        String sql = "INSERT INTO transactions (id, account_id, amount, type, trans_time) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO `transaction` (id, account_id, amount, type, trans_time) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -93,7 +93,7 @@ public class TransactionDao {
     }
 
     public void insertBatch(List<Transaction> transactions) {
-        String sql = "INSERT INTO transactions (id, account_id, amount, type, trans_time) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO `transaction` (id, account_id, amount, type, trans_time) VALUES (?, ?, ?, ?, ?)";
 
         Connection conn = null;
         try {
