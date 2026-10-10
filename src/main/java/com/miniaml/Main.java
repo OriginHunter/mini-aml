@@ -54,7 +54,7 @@ public class Main {
         checkRulesByAccount(byAccount, rules, suspiciousCaseDao);
         // 最后打印所有案例
         System.out.println("\n===== 已生成的可疑案例 =====");
-        printCases(suspiciousCaseDao.findAll());        //把按照账户分组的交易按日期分组
+        printCases(suspiciousCaseDao.findAll());
         Map<Long, Map<LocalDate, List<Transaction>>> byAccountDate = groupByAccountDate(byAccount);
         byAccountDate.forEach((id, t) -> System.out.println("账户" + id + ":" + t));
         //把每个账户每天交易金额求和
