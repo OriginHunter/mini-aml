@@ -573,3 +573,41 @@ v1.0 ⬜
 │ status          │
 │ create_time     │
 └─────────────────┘
+### 2026-10-10（Day 3：5 道 SQL 大作业）
+
+- **第 1 题**：查某客户近 30 天交易总额
+    - 三表 JOIN（customer + account + transaction）
+    - WHERE + SUM + GROUP BY
+    - 结果：张三 294000 元
+
+- **第 2 题**：日内资金快进快出账户
+    - CASE WHEN 把 IN / OUT 分别求和
+    - HAVING 过滤分组结果（相抵率 ≤ 20%）
+    - ABS 求绝对差
+    - 结果：识别出账户 1、3
+
+- **第 3 题**：窗口函数找拆分交易序列
+    - 内层 GROUP BY：按账户 + 日期分组算每日累计
+    - ROW_NUMBER：给每天编号
+    - LEAD：看下一天、下两天
+    - DATEDIFF：判断是否连续
+    - BETWEEN：判断金额是否在 4~5 万
+    - 结果：识别出账户 4（09-20 ~ 09-22）
+
+- **第 4 题**：统计每个规则近 7 天命中量
+    - WHERE 时间过滤 + GROUP BY + COUNT
+    - 结果：单笔大额 3 次、拆分交易 1 次
+
+- **第 5 题**：Explain 优化慢查询
+    - 加索引前：type=ALL、key=NULL、rows=14
+    - 加索引后：type=ref、key=idx_type、rows=10
+    - 理解：索引选择性对优化效果的影响
+
+### 新增知识点
+- `CASE WHEN`：SQL 版 if-else
+- `HAVING` vs `WHERE`：分组前后过滤
+- 窗口函数：`ROW_NUMBER` / `SUM OVER` / `LEAD`
+- `OVER(PARTITION BY ... ORDER BY ...)`：不压扁行的分组
+- `DATEDIFF`：计算日期差
+- `EXPLAIN`：查看执行计划
+- 索引选择性：不同值个数 / 总行数
