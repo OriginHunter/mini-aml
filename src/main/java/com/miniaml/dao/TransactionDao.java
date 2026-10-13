@@ -104,17 +104,20 @@ public class TransactionDao {
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 // ② 循环插入
+                int count = 0;
                 for (Transaction t : transactions) {
                     stmt.setLong(1, t.getId());
                     stmt.setLong(2, t.getAccountId());
                     stmt.setBigDecimal(3, t.getAmount());
                     stmt.setString(4, t.getType());
                     stmt.setTimestamp(5, Timestamp.valueOf(t.getTransTime()));
-                    stmt.executeUpdate();
+                    stmt.addBatch();
+                    count++;
+                    if (count%1000 == 0) {stmt.executeBatch(); conn.commit();}
                 }
 
                 // ③ 全部成功，提交
-                conn.commit();
+                stmt.executeBatch(); conn.commit();
                 System.out.println("批量插入成功，共 " + transactions.size() + " 条");
             }
         } catch (SQLException e) {
