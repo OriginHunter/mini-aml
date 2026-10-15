@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        /* 1. 给整个页面加背景色和字体 */
+        body {
+        font-family: Arial, sans-serif;
+        background-color: #fff84f;  /* 黄色背景 */
+        padding: 30px;               /* 内容离页面边缘远一点 */
+        }
+
+        /* 2. 让三个 div 横着排，变成三个卡片 */
+        /* 注意：你的三个 div 是"被包在一个大 div 里"的，所以我们要给大 div 加样式 */
+        /* 但现在你的大 div 没有 class，先用 div > div 这种"父子选择器"来选 */
+        div > div {
+        display: inline-block;       /* 让它们横着排 */
+        background-color: white;
+        border: 2px solid #4a90d9;   /* 蓝色边框 */
+        border-radius: 0px;          /* 直角 */
+        padding: 20px 40px;          /* 内边距 */
+        margin: 10px;                /* 外边距 */
+        font-size: 24px;             /* 字号 */
+        color: #e74c3c;              /* 数字颜色改成红色 */
+        }
+
+        /* 3. 表格样式 */
+        table {
+        border-collapse: collapse;   /* 合并边框 */
+        margin-top: 30px;            /* 和上面的卡片拉开距离 */
+        background-color: white;
+        width: 400px;                /* 表格宽度 */
+        }
+
+        th {
+        background-color: #4a90d9;   /* 蓝色表头 */
+        color: white;
+        padding: 10px;
+        }
+
+        td {
+        border: 1px solid #ccc;      /* 单元格边框 */
+        padding: 10px;
+        text-align: center;          /* 文字居中 */
+        }
+    </style>
+
+</head>
+<body>
+
+<h1>我的练习页面</h1>
+
+<div>
+    <div id = "card1" >222</div>
+    <div id = "card2" >333</div>
+    <div id = "card3" >111</div>
+</div>
+
+<button id = "changeBtn">点我改变数字</button>
+<script>
+    // 1. 找到那个按钮
+    let btn = document.getElementById("changeBtn");
+
+    // 2. 给按钮绑定一个“点击事件”
+    btn.addEventListener("click", function() {
+        // 3. 找到卡片的元素
+        let card1 = document.getElementById("card1");
+        let card2 = document.getElementById("card2");
+        let card3 = document.getElementById("card3");
+
+        // 4. 把卡片里的文字换掉
+        card1.innerText = "999";
+        card2.innerText = "888";
+        card3.innerText = "777";
+
+        alert("数字已修改！");
+    });
+</script>
+<table>
+    <tr>
+        <th>姓名</th>
+        <th>年龄</th>
+    </tr>
+    <tr>
+        <td>张三</td>
+        <td>25</td>
+    </tr>
+
+</table>
+
+</body>
+</html>
