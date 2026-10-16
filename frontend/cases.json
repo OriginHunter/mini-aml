@@ -1,0 +1,12 @@
+[
+  { "caseNo": "CASE-0001", "accountId": 1, "ruleName": "单笔大额交易", "status": "待处理", "createTime": "2026-10-14 10:30" },
+  { "caseNo": "CASE-0002", "accountId": 2, "ruleName": "拆分交易识别", "status": "已核实", "createTime": "2026-10-14 11:15" },
+  { "caseNo": "CASE-0003", "accountId": 3, "ruleName": "单日累计交易", "status": "待处理", "createTime": "2026-10-14 14:20" },
+  { "caseNo": "CASE-0004", "accountId": 2, "ruleName": "单笔大额交易", "status": "待处理", "createTime": "2026-10-14 15:20" },
+  { "caseNo": "CASE-0005", "accountId": 1, "ruleName": "拆分交易识别", "status": "已上报", "createTime": "2026-10-14 16:10" },
+  { "caseNo": "CASE-0006", "accountId": 3, "ruleName": "单笔大额交易", "status": "已核实", "createTime": "2026-10-14 17:05" },
+  { "caseNo": "CASE-0007", "accountId": 1, "ruleName": "单日累计交易", "status": "待处理", "createTime": "2026-10-15 09:30" },
+  { "caseNo": "CASE-0008", "accountId": 2, "ruleName": "拆分交易识别", "status": "已上报", "createTime": "2026-10-15 10:45" },
+  { "caseNo": "CASE-0009", "accountId": 3, "ruleName": "单日累计交易", "status": "待处理", "createTime": "2026-10-15 11:20" },
+  { "caseNo": "CASE-0010", "accountId": 1, "ruleName": "单笔大额交易", "status": "已核实", "createTime": "2026-10-15 14:00" }
+]
