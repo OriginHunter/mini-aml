@@ -59,6 +59,7 @@ public class Main {
         byAccountDate.forEach((id, t) -> System.out.println("账户" + id + ":" + t));
         //把每个账户每天交易金额求和
         sumByAccountDate(byAccountDate);
+        System.out.println(rules);
     }
     private static String nextCaseNo(SuspiciousCaseDao dao) {
         if (caseCounter < 0) {

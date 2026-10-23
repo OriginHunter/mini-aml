@@ -16,7 +16,7 @@ public class TransactionDao {
 
     public List<Transaction> findAll() {
 
-        String sql = "SELECT id, account_id, amount, type, trans_time FROM `transaction`";
+        String sql = "SELECT id, account_id, amount, type, trans_time FROM `transaction` LIMIT 10";
 
         List<Transaction> transactions = new ArrayList<>();
 

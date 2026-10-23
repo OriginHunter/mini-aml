@@ -30,4 +30,17 @@ public class TransactionRepository {
             return t;
         });
     }
+    public List<Transaction> findByAccountId(Long accountId) {
+        String sql = "SELECT id, account_id, amount, type, trans_time FROM `transaction` WHERE account_id = ? LIMIT 10";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Transaction t = new Transaction();
+            t.setId(rs.getLong("id"));
+            t.setAccountId(rs.getLong("account_id"));
+            t.setAmount(rs.getBigDecimal("amount"));
+            t.setType(rs.getString("type"));
+            t.setTransTime(rs.getTimestamp("trans_time").toLocalDateTime());
+            return t;
+        },accountId);
+    }
 }

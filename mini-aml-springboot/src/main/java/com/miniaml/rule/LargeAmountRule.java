@@ -1,11 +1,13 @@
 package com.miniaml.rule;
 
 import com.miniaml.model.Transaction;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class LargeAmountRule implements Rule<List<Transaction>> {
 
     private static final BigDecimal THRESHOLD = new BigDecimal("50000");

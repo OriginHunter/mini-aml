@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>mini-aml 交易流水看板</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; margin: 0; }
+        .header { background-color: #1a5276; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 22px; }
+
+        /* 按钮样式 */
+        button { padding: 10px 20px; background-color: #4a90d9; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 20px; font-size: 15px; }
+        button:hover { background-color: #357abd; }
+
+        /* 表格样式 */
+        table { width: 100%; border-collapse: collapse; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        th { background-color: #34495e; color: white; padding: 12px; text-align: left; font-size: 14px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        tr:hover { background-color: #f9f9f9; }
+
+        /* 金额和类型的特殊颜色 */
+        .amount { font-weight: bold; color: #e74c3c; }
+        .type-in { color: #27ae60; font-weight: bold; }
+        .type-out { color: #c0392b; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>mini-aml 交易流水看板</h1>
+    <p>实时查询账户 1 的最近 10 笔交易</p>
+</div>
+
+<button id="loadBtn">加载最新数据</button>
+
+<table>
+    <thead>
+    <tr>
+        <th>交易ID</th>
+        <th>账户ID</th>
+        <th>金额 (元)</th>
+        <th>类型</th>
+        <th>交易时间</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody">
+    <!-- 数据会被 JS 动态插入到这里 -->
+    </tbody>
+</table>
+
+<script>
+    // 把加载数据的逻辑封装成一个函数，方便重复调用
+    function loadData() {
+        let tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>加载中...</td></tr>";
+
+        // 调用后端的真实接口
+        fetch("http://localhost:8081/api/transactions/search?accountId=1")
+            .then(res => res.json())
+            .then(result => {
+                tbody.innerHTML = ""; // 清空加载提示
+
+                // 1. 判断后端的业务状态码
+                if (result.code === 200) {
+                    let data = result.data; // 2. 取出真正的交易数组
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;color:#999;'>暂无交易数据</td></tr>";
+                        return;
+                    }
+
+                    // 3. 遍历数据，渲染表格
+                    data.forEach(t => {
+                        let row = `
+                                <tr>
+                                    <td>${t.id}</td>
+                                    <td>${t.accountId}</td>
+                                    <td class="amount">${t.amount}</td>
+                                    <td class="${t.type === 'IN' ? 'type-in' : 'type-out'}">${t.type}</td>
+                                    <td>${t.transTime.replace("T", " ")}</td>
+                                </tr>
+                            `;
+                        tbody.innerHTML += row;
+                    });
+                } else {
+                    // 如果业务报错（比如 500），显示错误信息
+                    alert("业务报错：" + result.msg);
+                }
+            })
+            .catch(err => {
+                console.error("网络或跨域错误：", err);
+                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;color:red;'>加载失败，请检查 F12 控制台是否报跨域错误</td></tr>";
+            });
+    }
+
+    // 页面刚打开时，自动加载一次
+    window.onload = loadData;
+
+    // 绑定按钮点击事件，点击可以重新加载
+    document.getElementById("loadBtn").addEventListener("click", loadData);
+</script>
+</body>
+</html>
