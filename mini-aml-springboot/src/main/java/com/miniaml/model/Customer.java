@@ -1,78 +1,29 @@
 package com.miniaml.model;
 
-import org.springframework.stereotype.Component;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Component
+/**
+ * 客户实体类
+ */
+@Data // 自动生成所有 Getter/Setter/toString 等方法
+@NoArgsConstructor // 自动生成无参构造（框架反射需要）
+@AllArgsConstructor // 自动生成全参构造
 public class Customer {
+
     private Long id;
+
+    // 【业务规则】金融合规要求：客户姓名绝对不能为空
+    @NotBlank(message = "客户姓名不能为空")
     private String name;
+
+    // 【业务规则】身份证号是唯一标识，绝对不可为空
+    @NotBlank(message = "身份证号不能为空")
     private String idCard;
+
     private LocalDateTime createTime;
-    public Customer() {
-    }
-
-    public Customer(Long id, String name, String idCard,LocalDateTime createTime) {
-        this.id = id;
-        this.name = name;
-        this.idCard = idCard;
-        this.createTime = createTime;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getIdCard() {
-        return idCard;
-    }
-
-    public LocalDateTime getCreateTime() {
-        return createTime;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setIdCard(String idCard) {
-        this.idCard = idCard;
-    }
-
-    public void setCreateTime(LocalDateTime createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", name='" + name +
-                "', idCard='" + idCard +
-                "', creatTime='" + createTime +
-                "'}";
-    }
-
 }
-/*
-        Customer c = new Customer(1L, "张三", "110101199001011234");
-
-        System.out.println(c.getId());
-        System.out.println(c.getName());
-        System.out.println(c.getIdCard());
-
-        c.setId(2L);
-        c.setName("李四");
-        c.setIdCard("110101199001015678");
-
-        System.out.println(c);        a.setId(2L);
-*/
