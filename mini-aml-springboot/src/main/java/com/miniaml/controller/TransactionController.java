@@ -21,13 +21,14 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions")
-    public List<Transaction> getTransactions() {
-        // 服务员现在不找仓库了，改找大厨
-        return service.getAllTransactions();
+    public Result<List<Transaction>> getTransactions() {
+        List<Transaction> list = service.getAllTransactions();
+        return Result.success(list);
     }
     @GetMapping("/transactions/search")
     public Result<List<Transaction>> getByAccountId(@RequestParam Long accountId) {
-        return Result.success(service.getTransactionsByAccountId(accountId));
+        List<Transaction> list = service.getTransactionsByAccountId(accountId);
+        return Result.success(list);
     }
     @GetMapping("/transactions/large")
     public Result<List<Transaction>> getLargeTransactions(@RequestParam Long accountId) {

@@ -10,7 +10,8 @@ import java.util.List;
 
 @Service // 告诉 Spring：这是一个 Service 层的 Bean
 public class TransactionService {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TransactionService.class);    private final TransactionRepository repository;
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(TransactionService.class);
+    private final TransactionRepository repository;
     private final LargeAmountRule largeAmountRule;
 
     // 构造器注入：Spring 启动时，会自动把这个 repository 传进来

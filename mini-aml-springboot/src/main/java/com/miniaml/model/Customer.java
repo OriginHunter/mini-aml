@@ -1,17 +1,23 @@
 package com.miniaml.model;
 
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+
+@Component
 public class Customer {
     private Long id;
     private String name;
     private String idCard;
-
+    private LocalDateTime createTime;
     public Customer() {
     }
 
-    public Customer(Long id, String name, String idCard) {
+    public Customer(Long id, String name, String idCard,LocalDateTime createTime) {
         this.id = id;
         this.name = name;
         this.idCard = idCard;
+        this.createTime = createTime;
     }
 
     public Long getId() {
@@ -26,6 +32,10 @@ public class Customer {
         return idCard;
     }
 
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -38,12 +48,17 @@ public class Customer {
         this.idCard = idCard;
     }
 
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
     @Override
     public String toString() {
         return "Customer{" +
                 "id=" + id +
                 ", name='" + name +
                 "', idCard='" + idCard +
+                "', creatTime='" + createTime +
                 "'}";
     }
 
