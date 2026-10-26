@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS `rule_config`;
 -- 1. customer 客户表
 -- ============================================
 CREATE TABLE customer (
-    id         BIGINT       PRIMARY KEY,
+    id         BIGINT       PRIMARY KEY AUTO_INCREMENT,
     name       VARCHAR(50)  NOT NULL,
     id_card    VARCHAR(20)  NOT NULL UNIQUE,
     created_at DATETIME     NOT NULL
