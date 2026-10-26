@@ -1,62 +1,69 @@
 package com.miniaml.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.miniaml.mapper.CustomerMapper;
 import com.miniaml.model.Customer;
-import com.miniaml.repository.CustomerRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor // 使用 Lombok 自动生成构造器
 public class CustomerService {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CustomerService.class);
-    private final CustomerRepository customerRepository;
 
-    public CustomerService(CustomerRepository customerRepository){
-        this.customerRepository =customerRepository;
-    }
+    // 只注入 Mapper，再也不需要 Repository 了
+    private final CustomerMapper customerMapper;
+
+    /**
+     * 1. 查询所有客户
+     * MP 自带 selectList(null) 表示查询全表
+     */
     public List<Customer> getCustomer() {
-        log.info("开始查询客户");
-        List<Customer> customers = customerRepository.findAll();
-        log.info("成功查询");
-        return customers;
-    }
-    public List<Customer> getCustomerbyName(String name) {
-        log.info("开始查询客户{}", name);
-        List<Customer> customers = customerRepository.getByName(name);
-        log.info("成功查询");
-        return customers;
+        log.info("开始查询所有客户");
+        return customerMapper.selectList(null);
     }
 
     /**
-     * 更新客户信息
+     * 2. 根据名字查询（使用条件构造器 Wrapper）
+     */
+        public List<Customer> getCustomerByName(String name) {
+            log.info("按名字查询客户：{}", name);
+            // 创建 Lambda 条件构造器
+            LambdaQueryWrapper<Customer> wrapper = new LambdaQueryWrapper<>();
+            // eq 等于：数据库的 name 字段 等于 传入的 name
+            wrapper.eq(Customer::getName, name);
+            // 执行查询
+            return customerMapper.selectList(wrapper);
+        }
+
+    /**
+     * 3. 新增客户
+     * MP 自带 insert 方法，自动处理自增主键回填
+     */
+    public void addCustomer(Customer customer) {
+        log.info("准备新增客户：{}", customer.getName());
+        // 注意：MP 会自动识别 @TableId(type = IdType.AUTO)，插入时忽略 ID
+        customerMapper.insert(customer);
+    }
+
+    /**
+     * 4. 更新客户
+     * MP 自带 updateById，根据主键 ID 更新非空字段
      */
     public void updateCustomer(Customer customer) {
         log.info("准备更新客户，ID：{}", customer.getId());
-        int rows = customerRepository.update(customer);
-        if (rows == 0) {
-            // 抛出异常，会被全局异常处理器拦截，返回友好的提示
-            throw new RuntimeException("更新失败，该客户不存在");
-        }
+        customerMapper.updateById(customer);
     }
 
     /**
-     * 删除客户
+     * 5. 删除客户
+     * MP 自带 deleteById
      */
     public void deleteCustomer(Long id) {
         log.info("准备删除客户，ID：{}", id);
-        int rows = customerRepository.deleteById(id);
-        if (rows == 0) {
-            throw new RuntimeException("删除失败，该客户不存在");
-        }
-    }
-    /**
-     * 新增客户
-     */
-    public void addCustomer(Customer customer) {
-        log.info("准备新增客户，姓名：{}", customer.getName());
-        int rows = customerRepository.insert(customer);
-        if (rows == 0) {
-            throw new RuntimeException("新增客户失败");
-        }
+        customerMapper.deleteById(id);
     }
 }

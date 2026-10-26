@@ -28,7 +28,7 @@ public class CustomerController {
 
     @GetMapping("/customers/search")
     public Result<List<Customer>> getCustomerByName(@RequestParam String name) {
-        List<Customer> list = customerService.getCustomerbyName(name);
+        List<Customer> list = customerService.getCustomerByName(name);
         return Result.success(list);
     }
 
