@@ -65,5 +65,16 @@ public class CustomerService {
     public void deleteCustomer(Long id) {
         log.info("准备删除客户，ID：{}", id);
         customerMapper.deleteById(id);
+        log.info("删除成功");
     }
-}
+
+    public void restoreCustomer(Long id) {
+        // 接收 MySQL 返回的影响行数
+        int rows = customerMapper.restoreCustomer(id);
+
+        if (rows > 0) {
+            log.info("恢复成功！MySQL 告诉我修改了 {} 行数据", rows);
+        } else {
+            log.warn("恢复失败！MySQL 说没有找到 ID 为 {} 的数据", id);
+        }
+    }}

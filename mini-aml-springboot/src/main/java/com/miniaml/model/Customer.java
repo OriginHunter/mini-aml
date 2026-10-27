@@ -1,6 +1,7 @@
 package com.miniaml.model;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor // 自动生成无参构造（框架反射需要）
 @AllArgsConstructor // 自动生成全参构造
 public class Customer {
+    // 逻辑删除标记：0 正常，1 已删除
+    @TableLogic
+    private Integer deleted;
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;

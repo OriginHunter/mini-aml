@@ -62,4 +62,9 @@ public class CustomerController {
         customerService.addCustomer(customer);
         return Result.success("新增成功");
     }
+    @PutMapping("/customers/restore/{id}")
+    public Result<String> restoreCustomer(@PathVariable Long id) {
+        customerService.restoreCustomer(id);
+        return Result.success("客户恢复成功");
+    }
 }

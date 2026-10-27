@@ -1,9 +1,6 @@
 package com.miniaml.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +14,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @TableName("transaction") // 告诉 MP 表名
 public class Transaction {
+    // 逻辑删除标记：0 正常，1 已删除
+    @TableLogic
+    private Integer deleted;
 
     @TableId(type = IdType.AUTO) // 主键自增
     private Long id;        //交易编号
