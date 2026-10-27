@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -23,11 +24,27 @@ public class TransactionService {
         return transactionMapper.selectList(null);
     }
 
-    public Page<Transaction> getTransactionPage(Integer pageNum, Integer pageSize, Long accountId) {
+    public Page<Transaction> getTransactionPage(
+            Integer pageNum, Integer pageSize, Long accountId,
+            // TODO 5: 接收 Controller 传来的三个新参数
+            BigDecimal minAmount, BigDecimal maxAmount, String type) {
+
         Page<Transaction> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<Transaction> wrapper = new LambdaQueryWrapper<>();
+
+        // 1. 按账户查（这个你写过了）
         wrapper.eq(accountId != null, Transaction::getAccountId, accountId);
-        return transactionMapper.selectPage(page,wrapper);
+
+        // TODO 6: 按最小金额查（大于等于）。提示：用 .ge() 方法
+        wrapper.ge(minAmount != null, Transaction::getAmount, minAmount);
+
+        // TODO 7: 按最大金额查（小于等于）。提示：用 .le() 方法
+        wrapper.le(maxAmount != null, Transaction::getAmount, maxAmount);
+
+        // TODO 8: 按类型查（等于）。提示：判断 type 不为 null 且不为空字符串 ""
+        wrapper.eq(type != null && !type.isEmpty(), Transaction::getType, type);
+
+        return transactionMapper.selectPage(page, wrapper);
     }
 
     public List<Transaction> getTransactionsByAccountId(Long accountId) {

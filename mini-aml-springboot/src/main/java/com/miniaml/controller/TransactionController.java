@@ -6,6 +6,7 @@ import com.miniaml.model.Transaction;
 import com.miniaml.service.TransactionService; // 注意这里换了
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -39,11 +40,23 @@ public class TransactionController {
     }
     @GetMapping("/transactions/page")
     public Result<Page<Transaction>> getTransactionPage(
-            @RequestParam(defaultValue = "1") Integer pageNum,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            @RequestParam(required = false) Long accountId) {
+        @RequestParam(defaultValue = "1") Integer pageNum,
+        @RequestParam(defaultValue = "10") Integer pageSize,
+        @RequestParam(required = false) Long accountId,
 
-        Page<Transaction> result = transactionService.getTransactionPage(pageNum, pageSize, accountId);
+        // TODO 1: 按照上面 accountId 的格式，加上最小金额 minAmount，类型是 BigDecimal
+        @RequestParam(required = false) BigDecimal minAmount,
+
+        // TODO 2: 加上最大金额 maxAmount，类型也是 BigDecimal
+        @RequestParam(required = false) BigDecimal maxAmount,
+
+        // TODO 3: 加上交易类型 type，类型是 String
+        @RequestParam(required = false) String type) {
+
+        // TODO 4: 把新增的这三个参数，传给 Service 层
+        Page<Transaction> result = transactionService.getTransactionPage(
+                pageNum, pageSize, accountId, minAmount, maxAmount, type);
+
         return Result.success(result);
     }
 }
