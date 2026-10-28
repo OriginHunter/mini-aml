@@ -67,4 +67,11 @@ public class CustomerController {
         customerService.restoreCustomer(id);
         return Result.success("客户恢复成功");
     }
+    // TODO 5：用什么注解接收前端发来的 POST 请求？
+    @PostMapping("/customers/register")
+    public Result<String> registerCustomer(@Validated @RequestBody Customer customer) {
+        // 调用 Service 里刚写的方法
+        customerService.registerCustomerWithAccount(customer); // TODO 6：填空
+        return Result.success("注册成功");
+    }
 }

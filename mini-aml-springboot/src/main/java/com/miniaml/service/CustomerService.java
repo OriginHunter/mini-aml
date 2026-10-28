@@ -1,12 +1,17 @@
 package com.miniaml.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.miniaml.mapper.AccountMapper;
 import com.miniaml.mapper.CustomerMapper;
+import com.miniaml.model.Account;
 import com.miniaml.model.Customer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -16,6 +21,7 @@ public class CustomerService {
 
     // 只注入 Mapper，再也不需要 Repository 了
     private final CustomerMapper customerMapper;
+    private final AccountMapper accountMapper;
 
     /**
      * 1. 查询所有客户
@@ -77,4 +83,24 @@ public class CustomerService {
         } else {
             log.warn("恢复失败！MySQL 说没有找到 ID 为 {} 的数据", id);
         }
-    }}
+    }
+    // TODO 3：在这里加上什么注解，才能让任何异常都触发回滚？
+    @Transactional(rollbackFor = Exception.class)
+    public void registerCustomerWithAccount(Customer customer) {
+
+        // 1. 先把客户存进数据库
+        customerMapper.insert(customer);
+
+        // 2. 给客户开个户
+        Account account = new Account();
+        account.setAccountNo("88888888");
+        account.setCustomerId(customer.getId());
+        account.setBalance(new BigDecimal("0.00"));
+        account.setCreatedAt(LocalDateTime.now());
+        accountMapper.insert(account);
+
+        // 3. 💣 模拟：这里突然发生了一个无法处理的错误！
+        // TODO 4：写一行代码，主动抛出一个 RuntimeException 异常
+        throw new RuntimeException("模拟开户失败，测试事务回滚！");
+    }
+}
