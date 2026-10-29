@@ -64,5 +64,14 @@ public class TransactionController {
     public Result<List<TransactionDetailDTO>> getDetails(@RequestParam(required = false) String type) {
         return Result.success(transactionService.getTransactionDetails(type));
     }
+    @GetMapping("/transactions/sort")
+    public Result<List<Transaction>> getBySortField(@RequestParam String sortField) {
+        return Result.success(transactionService.getBySortField(sortField));
+    }
 
+    // 注意：传 List 最好用 POST，因为 GET 传数组不好传
+    @PostMapping("/transactions/batch")
+    public Result<List<Transaction>> getBatch(@RequestBody List<Long> ids) {
+        return Result.success(transactionService.getTransactionsByIds(ids));
+    }
 }

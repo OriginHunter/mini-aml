@@ -69,5 +69,16 @@ public class TransactionService {
     public List<TransactionDetailDTO> getTransactionDetails(String type) {
         return transactionMapper.findTransactionDetails(type);
     }
-
-}
+    public List<Transaction> getBySortField(String sortField) {
+        // 白名单校验：前端只能传 amount 或 id，传别的直接抛异常！
+        if (!"amount".equals(sortField) && !"id".equals(sortField)) {
+            throw new RuntimeException("非法排序字段，不许注入！");
+        }
+        return transactionMapper.getBySortField(sortField);
+    }
+    public List<Transaction> getTransactionsByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new RuntimeException("ID列表不能为空");
+        }
+        return transactionMapper.findByIds(ids);
+    }}

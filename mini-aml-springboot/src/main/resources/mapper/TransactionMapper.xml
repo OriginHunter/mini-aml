@@ -26,4 +26,21 @@
         LIMIT 20
     </select>
 
+    <!-- 演示 SQL 注入危险 -->
+    <select id="getBySortField" resultType="com.miniaml.model.Transaction">
+        SELECT * FROM `transaction`
+        ORDER BY ${sortField} DESC
+        LIMIT 5
+    </select>
+
+    <!-- 批量查询 -->
+    <select id="findByIds" resultType="com.miniaml.model.Transaction">
+        SELECT * FROM `transaction`
+        WHERE id IN
+        <!-- 核心魔法：循环遍历 ids 集合 -->
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </select>
 </mapper>
