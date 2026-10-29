@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace 必须是你 Mapper 接口的全限定名 -->
+<mapper namespace="com.miniaml.mapper.TransactionMapper">
+
+    <!-- id 必须对应接口里的方法名。resultType 是你接收数据的 DTO 类 -->
+    <select id="findTransactionDetails" resultType="com.miniaml.dto.TransactionDetailDTO">
+        SELECT
+        t.id AS id,
+        c.name AS customerName,
+        a.account_no AS accountNo,
+        t.amount AS amount,
+        t.type AS type,
+        t.trans_time AS transTime
+        FROM `transaction` t
+        LEFT JOIN account a ON t.account_id = a.id
+        LEFT JOIN customer c ON a.customer_id = c.id
+        WHERE c.deleted = 0
+
+        <!-- 动态 SQL 魔法：如果前端传了 type，就加上这个条件 -->
+        <if test="type != null and type != ''">
+            AND t.type = #{type}
+        </if>
+
+        ORDER BY t.trans_time DESC
+        LIMIT 20
+    </select>
+
+</mapper>

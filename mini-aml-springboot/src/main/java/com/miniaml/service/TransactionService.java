@@ -2,6 +2,7 @@ package com.miniaml.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.miniaml.dto.TransactionDetailDTO;
 import com.miniaml.mapper.TransactionMapper;
 import com.miniaml.model.Transaction;
 import com.miniaml.rule.LargeAmountRule;
@@ -64,6 +65,9 @@ public class TransactionService {
 
         log.info("查询完成，共查出 {} 条大额交易", hits.size());
         return hits;
+    }
+    public List<TransactionDetailDTO> getTransactionDetails(String type) {
+        return transactionMapper.findTransactionDetails(type);
     }
 
 }

@@ -2,6 +2,7 @@ package com.miniaml.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.miniaml.common.Result;
+import com.miniaml.dto.TransactionDetailDTO;
 import com.miniaml.model.Transaction;
 import com.miniaml.service.TransactionService; // 注意这里换了
 import org.springframework.web.bind.annotation.*;
@@ -59,4 +60,9 @@ public class TransactionController {
 
         return Result.success(result);
     }
+    @GetMapping("/transactions/details")
+    public Result<List<TransactionDetailDTO>> getDetails(@RequestParam(required = false) String type) {
+        return Result.success(transactionService.getTransactionDetails(type));
+    }
+
 }
