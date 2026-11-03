@@ -36,27 +36,30 @@ public class RuleService {
 
         if (ruleConfig == null || Boolean.FALSE.equals(ruleConfig.getEnabled())) {
             throw new RuntimeException("规则不存在或未启用");
-        } else {
-            log.info("获取交易列表");
-            LambdaQueryWrapper<Transaction> wrapper = new LambdaQueryWrapper<>();
-            BigDecimal threshold = ruleConfig.getThreshold();
-            wrapper.gt(Transaction::getAmount, threshold);
-            List<Transaction> transactionList = transactionMapper.selectList(wrapper);
-
-            log.info("获取可疑案例列表");
-            String dateStr = DateUtil.format(new Date(), "yyyyMMdd");
-            List<SuspiciousCase> suspiciousCaseList = new ArrayList<>();
-            for (Transaction transaction : transactionList) {
-
-                SuspiciousCase suspiciousCase = createCaseNo(transaction, dateStr, ruleConfig);
-                suspiciousCaseList.add(suspiciousCase);
-
-            }
-            log.info("开始插入可疑案例列表");
-            suspiciousCaseService.saveBatch(suspiciousCaseList);
-            log.info("插入可疑案例列表成功");
-            return transactionList.size();
         }
+        log.info("获取交易列表");
+        LambdaQueryWrapper<Transaction> wrapper = new LambdaQueryWrapper<>();
+        BigDecimal threshold = ruleConfig.getThreshold();
+        wrapper.gt(Transaction::getAmount, threshold);
+        List<Transaction> transactionList = transactionMapper.selectList(wrapper);
+
+        log.info("获取可疑案例列表");
+        String dateStr = DateUtil.format(new Date(), "yyyyMMdd");
+        List<SuspiciousCase> suspiciousCaseList = new ArrayList<>();
+        for (Transaction transaction : transactionList) {
+
+            SuspiciousCase suspiciousCase = createCaseNo(transaction, dateStr, ruleConfig);
+            suspiciousCaseList.add(suspiciousCase);
+            // 模拟生产环境的异常场景：如果交易超过 100 条，直接宕机
+            if (transactionList.size() > 100) {
+                throw new RuntimeException("模拟跑批中途宕机！");
+            }
+        }
+        log.info("开始插入可疑案例列表");
+        suspiciousCaseService.saveBatch(suspiciousCaseList);
+        log.info("插入可疑案例列表成功");
+        return transactionList.size();
+
     }
 
     private static @NonNull SuspiciousCase createCaseNo(Transaction transaction, String dateStr, RuleConfig ruleConfig) {
