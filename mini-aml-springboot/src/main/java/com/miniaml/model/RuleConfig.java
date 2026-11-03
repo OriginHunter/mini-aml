@@ -24,6 +24,7 @@ public class RuleConfig {
     private String ruleType;
     private BigDecimal threshold;
     private Boolean enabled;
+    private Integer hitCount;
 
     @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;

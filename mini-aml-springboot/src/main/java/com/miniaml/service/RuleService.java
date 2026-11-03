@@ -58,6 +58,12 @@ public class RuleService {
         log.info("开始插入可疑案例列表");
         suspiciousCaseService.saveBatch(suspiciousCaseList);
         log.info("插入可疑案例列表成功");
+        // 1. 获取当前命中数（防空指针）
+        int currentHit = ruleConfig.getHitCount() == null ? 0 : ruleConfig.getHitCount();
+        // 2. 累加
+        ruleConfig.setHitCount(currentHit + suspiciousCaseList.size());
+        // 3. 更新数据库
+        ruleConfigMapper.updateById(ruleConfig);
         return transactionList.size();
 
     }
