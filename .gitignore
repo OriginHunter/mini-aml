@@ -42,3 +42,6 @@ build/
 ### 本地数据库配置（含密码，不能进 Git） ###
 src/main/resources/db.properties
 mini-aml-springboot/src/main/resources/application.properties
+
+### 公司内部材料（培养方案原文，不要推到公开仓库） ###
+docs/training-plan-reference.docx
