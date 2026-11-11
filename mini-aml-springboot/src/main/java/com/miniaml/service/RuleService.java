@@ -27,14 +27,51 @@ public class RuleService {
     private final RuleConfigMapper ruleConfigMapper;
     private final SuspiciousCaseService suspiciousCaseService;
     private final TransactionMapper transactionMapper;
+    private final RuleCacheService ruleCacheService;
+
+    /**
+     * 读规则配置：先看 Redis，未命中再回源查库并写回缓存。
+     * 这样跑批和“查看规则详情”都走同一入口，缓存只有一处维护。
+     */
+    public RuleConfig getRuleConfig(Long id) {
+        return ruleCacheService.get(id).orElseGet(() -> {
+            log.info("缓存未命中，回源查库，ruleId={}", id);
+            RuleConfig ruleConfig = ruleConfigMapper.selectById(id);
+            if (ruleConfig == null) {
+                throw new RuntimeException("规则不存在");
+            }
+            ruleCacheService.put(ruleConfig);
+            return ruleConfig;
+        });
+    }
+
+    /**
+     * 修改规则配置（阈值 / 启停）。
+     * 顺序很重要：先更新数据库，再删除缓存——不能反过来，
+     * 否则删完缓存的瞬间有请求回源，会把旧值又写回缓存。
+     */
+    public void updateRuleConfig(Long id, BigDecimal threshold, Boolean enabled) {
+        RuleConfig ruleConfig = ruleConfigMapper.selectById(id);
+        if (ruleConfig == null) {
+            throw new RuntimeException("规则不存在");
+        }
+        if (threshold != null) {
+            ruleConfig.setThreshold(threshold);
+        }
+        if (enabled != null) {
+            ruleConfig.setEnabled(enabled);
+        }
+        ruleConfigMapper.updateById(ruleConfig);
+        ruleCacheService.evict(id);
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public Integer executeRule(Long id) {
 
-        log.info("获取规则");
-        RuleConfig ruleConfig = ruleConfigMapper.selectById(id);
+        log.info("获取规则（走缓存）");
+        RuleConfig ruleConfig = getRuleConfig(id);
 
-        if (ruleConfig == null || Boolean.FALSE.equals(ruleConfig.getEnabled())) {
+        if (Boolean.FALSE.equals(ruleConfig.getEnabled())) {
             throw new RuntimeException("规则不存在或未启用");
         }
         log.info("获取交易列表");
@@ -47,13 +84,8 @@ public class RuleService {
         String dateStr = DateUtil.format(new Date(), "yyyyMMdd");
         List<SuspiciousCase> suspiciousCaseList = new ArrayList<>();
         for (Transaction transaction : transactionList) {
-
             SuspiciousCase suspiciousCase = createCaseNo(transaction, dateStr, ruleConfig);
             suspiciousCaseList.add(suspiciousCase);
-            // 模拟生产环境的异常场景：如果交易超过 100 条，直接宕机
-            if (transactionList.size() > 100) {
-                throw new RuntimeException("模拟跑批中途宕机！");
-            }
         }
         log.info("开始插入可疑案例列表");
         suspiciousCaseService.saveBatch(suspiciousCaseList);
@@ -64,6 +96,8 @@ public class RuleService {
         ruleConfig.setHitCount(currentHit + suspiciousCaseList.size());
         // 3. 更新数据库
         ruleConfigMapper.updateById(ruleConfig);
+        // 4. 命中数变了，缓存里的副本就是旧值，必须失效，否则前端看到的一直是旧命中数
+        ruleCacheService.evict(id);
         return transactionList.size();
 
     }

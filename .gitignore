@@ -45,3 +45,6 @@ mini-aml-springboot/src/main/resources/application.properties
 
 ### 公司内部材料（培养方案原文，不要推到公开仓库） ###
 docs/training-plan-reference.docx
+
+### 本地 Maven 仓库副本（沙箱内构建用，勿提交） ###
+.m2repo/
