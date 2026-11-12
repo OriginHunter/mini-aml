@@ -38,7 +38,7 @@ public class RuleService {
             log.info("缓存未命中，回源查库，ruleId={}", id);
             RuleConfig ruleConfig = ruleConfigMapper.selectById(id);
             if (ruleConfig == null) {
-                throw new RuntimeException("规则不存在");
+                throw new RuntimeException("规则不存在或未启用");
             }
             ruleCacheService.put(ruleConfig);
             return ruleConfig;
@@ -53,7 +53,7 @@ public class RuleService {
     public void updateRuleConfig(Long id, BigDecimal threshold, Boolean enabled) {
         RuleConfig ruleConfig = ruleConfigMapper.selectById(id);
         if (ruleConfig == null) {
-            throw new RuntimeException("规则不存在");
+            throw new RuntimeException("规则不存在或未启用");
         }
         if (threshold != null) {
             ruleConfig.setThreshold(threshold);
@@ -86,6 +86,9 @@ public class RuleService {
         for (Transaction transaction : transactionList) {
             SuspiciousCase suspiciousCase = createCaseNo(transaction, dateStr, ruleConfig);
             suspiciousCaseList.add(suspiciousCase);
+        }
+        if (suspiciousCaseList.size() > 100) {
+            throw new RuntimeException("模拟宕机，测试事务回滚！");
         }
         log.info("开始插入可疑案例列表");
         suspiciousCaseService.saveBatch(suspiciousCaseList);
